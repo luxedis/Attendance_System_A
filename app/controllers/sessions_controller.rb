@@ -9,7 +9,7 @@ class SessionsController < ApplicationController
       log_in user
       redirect_to user
     else
-      flash.now[:danger] = '承認に失敗しました。'
+      flash.now[:danger] = '認証に失敗しました。'
       render :new
     end
   end
