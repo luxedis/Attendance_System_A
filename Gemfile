@@ -4,6 +4,8 @@ gem 'rails',        '~> 5.1.6 '
 gem 'bcrypt' # passwordハッシュ化
 gem 'faker' # サンプルユーザー作成
 gem 'bootstrap-sass'
+gem 'will_paginate' # ページネーション
+gem 'bootstrap-will_paginate' # ページネーション
 gem 'puma',         '~> 3.7'
 gem 'sass-rails',   '~> 5.0'
 gem 'uglifier',     '>= 1.3.0'
