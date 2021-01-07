@@ -5,14 +5,14 @@
       <td>時間管理表</td>
       <td>指定勤務時間<%= format_basic_info(@user.work_time) %></td>
       <td>基本時間<%= format_basic_info(@user.basic_time) %></td>
-      <td>月初日</td>
+      <td>月初日:<%= l(@first_day, format: :short) %></td>
     </tr>
     
     <tr>
       <td>所属:<%= @user.department.present? ? @user.department : "未所属" %></td>
       <td>名前:<%= @user.name %></td>
       <td>出勤日数</td>
-      <td>月末日</td>
+      <td>月末日:<%= l(@last_day, format: :short) %></td>
     </tr>
   </table>
 </div>
