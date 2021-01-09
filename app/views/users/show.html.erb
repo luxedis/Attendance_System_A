@@ -11,7 +11,7 @@
     <tr>
       <td>所属:<%= @user.department.present? ? @user.department : "未所属" %></td>
       <td>名前:<%= @user.name %></td>
-      <td>出勤日数</td>
+      <td>出勤日数:<%= @worked_sum %>日</td>
       <td>月末日:<%= l(@last_day, format: :short) %></td>
     </tr>
   </table>
@@ -46,7 +46,11 @@
           </td>
           <td><%= l(day.started_at, format: :time) if day.started_at.present? %></td>
           <td><%= l(day.finished_at, format: :time) if day.finished_at.present? %></td>
-          <td></td>
+          <td>
+            <% if day.started_at.present? && day.finished_at.present? %>
+              <%= working_times(day.started_at, day.finished_at) %>
+            <% end %>
+          </td>
           <td></td>
         </tr>
       <% end %>
