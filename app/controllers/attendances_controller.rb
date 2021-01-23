@@ -31,4 +31,10 @@ class AttendancesController < ApplicationController
   def update_one_month
     # debugger
   end
+  
+  private
+    # 1ヶ月分の勤怠情報を扱う
+    def attendances_params
+      params.requitr(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+    end
 end
