@@ -49,16 +49,17 @@
           <td><%= l(day.worked_on, format: :short) %></td> <!-- l(day, format: :short -->
           <td class='<%= "wday#{day.worked_on.wday}"%>'><%= $days_of_the_week[day.worked_on.wday] %></td> <!--[day.wday]-->
           <td><%= format_hour(day.started_at) if day.started_at.present? %></td> <!--l(day.started_at, format: :time)-->
-          <td><%= format_min(day.finished_at) if day.finished_at.present? %></td>
+          <td><%= format_min(day.started_at) if day.started_at.present? %></td>
           <td>
             <% if btn_text = attendance_state(day) %> <!--<if (Date.current == day.worked_on) && day.started_at.nil? %> -->
               <%= link_to "#{btn_text}登録", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
             <% end %> <!--< elsif (Date.current == day.worked_on) && day.started_at.present? day.finished_at.nil? %>-->
           </td>
-          <td><%= format_hour(day.started_at) if day.started_at.present? %></td>
           <td><%= format_hour(day.finished_at) if day.finished_at.present? %></td>
+          <td><%= format_min(day.finished_at) if day.finished_at.present? %></td>
           <td>
             <% if day.started_at.present? && day.finished_at.present? %>
+            <!--< % byebug %>-->
               <%= str_times = working_times(day.started_at, day.finished_at) %>
               <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
             <% end %>

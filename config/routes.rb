@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     member do
       get 'edit_basic_info'
       patch 'update_basic_info'
+      get 'attendances/edit_one_month' # 勤怠編集ページのルート
     end
     resources :attendances, only: :update # 出勤登録ボタン
   end
