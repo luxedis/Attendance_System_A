@@ -25,7 +25,6 @@
       </tr>
     </thead>
     
-    <%= link_to "勤怠を編集", '#', class: "btn btn-primary" %>
     <tbody>
       <% @attendances.each do |day| %> <!-- @attendances= (@first_day..@last_day). -->
         <tr>
@@ -47,8 +46,6 @@
               <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
             <% end %>
           </td>
-          <td></td>
-          <td></td>
         </tr>
       <% end %>
     </tbody>
