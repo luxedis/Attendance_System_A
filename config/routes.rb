@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       get 'edit_basic_info'
       patch 'update_basic_info'
       get 'attendances/edit_one_month' # 勤怠編集ページのルート
+      patch 'attendances/update_one_month' # 1ヶ月分まとめて更新ボタン
     end
     resources :attendances, only: :update # 出勤登録ボタン
   end
