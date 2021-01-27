@@ -42,7 +42,7 @@
       </tr>
     </thead>
     
-    <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
+    <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(@user, date: @first_day), class: "btn btn-primary" %>
     <tbody>
       <% @attendances.each do |day| %> <!-- @attendances= (@first_day..@last_day). -->
         <tr>
