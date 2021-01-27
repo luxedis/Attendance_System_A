@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
-  before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info]
+  before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info]
   before_action :correct_user, only: [:edit, :update]
-  before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
+  before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info]
   before_action :set_one_month, only: :show
   
   def index
@@ -60,6 +60,15 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
   
+  def update_all_users_basic_info
+    if User.update(update_all_users_basic_info_params)
+      # User.update_all(:basic_time => params[:user][:basic_time], :work_time => params[:user][:work_time]) #update_allはストロングパラが使えないので。上記と動きは同じ
+      flash[:success] = "全ユーザーの基本情報を更新しました。"
+    else
+      flash[:danger] = "全ユーザーの更新は失敗しました。<br>" + @user.errors.full_messages.join("<br>")
+    end
+    redirect_to edit_basic_info_user_url(@user)
+  end
   
   private
   
@@ -70,6 +79,10 @@ class UsersController < ApplicationController
   def basic_info_params
     binding.pry# debugger
     params.require(:user).permit(:department, :basic_time, :work_time)
+  end
+  
+  def update_all_users_basic_info_params
+    params.require(:user).permit(:basic_time, :work_time)
   end
   
   # beforeフィルター
