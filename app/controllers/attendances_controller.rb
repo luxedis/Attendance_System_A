@@ -18,7 +18,7 @@ class AttendancesController < ApplicationController
       end
     elsif @attendance.finished_at.nil?
       if @attendance.update_attributes(finished_at: Time.current.change(sec: 0))
-        flash[:info] = "お疲れ様でした・"
+        flash[:info] = "お疲れ様でした。"
       else
         flash[:danger] = UPDATE_ERROR_MSG
       end
@@ -51,7 +51,7 @@ class AttendancesController < ApplicationController
     
     # beforeフィルター
     def admin_or_correct_user
-      @user = User.find(params[:id]) if @user.blank? # params[:user_id]ではなく？
+      @user = User.find(params[:user_id]) if @user.blank? # params[:user_id]ではなく？
       unless current_user?(@user) || current_user.admin?
         flash[:danger] = "編集権限がありません。"
         redirect_to(root_url)
