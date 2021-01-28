@@ -51,7 +51,7 @@ class AttendancesController < ApplicationController
     
     # beforeフィルター
     def admin_or_correct_user
-      @user = User.find(params[:user_id]) if @user.blank? # params[:user_id]ではなく？
+      @user = User.find_by(params[:user_id]) if @user.blank? # params[:user_id]ではなく？
       unless current_user?(@user) || current_user.admin?
         flash[:danger] = "編集権限がありません。"
         redirect_to(root_url)
