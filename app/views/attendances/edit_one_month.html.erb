@@ -22,7 +22,7 @@
             <tr>
               <td><%= l(day.worked_on, format: :short) %></td> <!-- l(day, format: :short -->
               <td class='<%= "wday#{day.worked_on.wday}"%>'><%= $days_of_the_week[day.worked_on.wday] %></td> <!--[day.wday]-->
-              <% if !current_user.admin? && (Date.current < day.worked_on) %>
+              <% if Date.current < day.worked_on %> <!-- !current_user.admin? && を外した状態-->
                 <td><%= attendance.time_field :started_at, readonly: true, class: "form-control" %></td>
                 <td><%= attendance.time_field :finished_at, readonly: true, class: "form-control" %></td>
               <% else %>

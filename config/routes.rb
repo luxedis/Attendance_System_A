@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     member do
       get 'edit_basic_info'
       patch 'update_basic_info'
-      patch 'update_all_users_basic_info' # 一括処理
+      patch 'update_all_users_basic_info' # ヘッダーから全ユーザーの勤務時間を一括更新
       get 'attendances/edit_one_month' # 勤怠編集ページのルート
       patch 'attendances/update_one_month' # 1ヶ月分まとめて更新ボタン
     end
