@@ -1,5 +1,5 @@
 class AttendancesController < ApplicationController
-  before_action :set_user, only: :edit_one_month
+  before_action :set_user, only: [:edit_one_month, :update_one_month]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
   before_action :set_one_month, only: :edit_one_month
@@ -30,15 +30,26 @@ class AttendancesController < ApplicationController
   end
   
   def update_one_month
+    # debugger
     ActiveRecord::Base.transaction do # トランザクション(分割できないワンセット処理の事)の開始
       attendances_params.each do |id, item|
-        attendance = Attendance.find(id)
-        attendance.update_attributes!(item)
+        # debugger
+        if item[:started_at].present? && item[:finished_at].blank?
+          flash[:danger] = "終了時間が入力されていません。"
+          redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+        else item[:started_at].blank? && item[:fihished_at].present?
+          flash[:danger] = "開始時間が入力されていません。"
+          redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+        end
+        attendance = Attendance.find(id) # 242
+        attendance.update_attributes!(item) # 失敗すると42行に飛ぶ
+      #   attendance.attributes = item # ここでは保存せず、アイテムのカラムをセットのみする1/1のidが242
+      #   attendance.save!(context: :attendance_update) #ここで上記で更新した値をレコードに保存(同時にバリデーションを実行)
       end
     end
     flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
     redirect_to user_url(date: params[:date])
-  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐
+  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐 updateで例外処理がおきた
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
     redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
