@@ -35,10 +35,10 @@ class AttendancesController < ApplicationController
       attendances_params.each do |id, item|
         # debugger
         if item[:started_at].present? && item[:finished_at].blank?
-          flash[:danger] = "終了時間が入力されていません。"
+          flash[:danger] = "退勤時間が入力されていません。"
           redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-        else item[:started_at].blank? && item[:fihished_at].present?
-          flash[:danger] = "開始時間が入力されていません。"
+        elsif item[:started_at].blank? && item[:finished_at].present?
+          flash[:danger] = "出社時間が入力されていません。"
           redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
         end
         attendance = Attendance.find(id) # 242
