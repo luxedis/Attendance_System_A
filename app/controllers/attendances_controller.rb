@@ -42,7 +42,7 @@ class AttendancesController < ApplicationController
           redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
         end
         attendance = Attendance.find(id) # 242
-        attendance.update_attributes!(item) # 失敗すると42行に飛ぶ
+        attendance.update_attributes!(item) # 失敗すると42行に飛ぶ。ここでモデルを見て、ヘルパーのバリデに引っかかった場合!で例外処理に飛ばす
       #   attendance.attributes = item # ここでは保存せず、アイテムのカラムをセットのみする1/1のidが242
       #   attendance.save!(context: :attendance_update) #ここで上記で更新した値をレコードに保存(同時にバリデーションを実行)
       end
@@ -50,6 +50,7 @@ class AttendancesController < ApplicationController
     flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
     redirect_to user_url(date: params[:date])
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐 updateで例外処理がおきた
+    # flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。<br>" + attendance.errors.full_messages.join("<br>")
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
     redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end

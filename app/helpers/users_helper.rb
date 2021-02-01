@@ -10,6 +10,6 @@ module UsersHelper
   end
   
   def format_min(time)
-    format("%02d", (time.min * 15) / 15)
+    format("%02d", ((time.min / 15) * 15)) # time.minを15で掛けてから15で割る、計算式ミスってた。
   end
 end

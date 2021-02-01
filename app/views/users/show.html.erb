@@ -60,7 +60,7 @@
           <td></td>
           <td><% if day.started_at.present? && day.finished_at.present? %>
             <!--< % byebug %>-->
-              <%= str_times = working_times(day.started_at, day.finished_at) %>
+              <%= str_times = working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %> <!--# gemのrouindingをinstall,floor_to(15minutesで丸めて表示)-->
               <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
             <% end %></td>
           <td><%= day.note %></td>
