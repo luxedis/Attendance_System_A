@@ -1,7 +1,18 @@
 <% provide(:title, 'All Users') %>
-<h1>ユーザー一覧</h1>
-
+<% if params[:search] %>
+  <h1>検索結果</h1>
+  <% else %>
+  <h1>ユーザー一覧</h1>
+<% end %>  
+  
 <div class="col-md-10 col-md-offset-1">
+  <%= form_with(scope: :search, url: users_path, method: :get, local: true) do |form| %>
+    <!--< %= f.label :search, "ユーザー名検索",  %><br>-->
+    <!--< %= form.search_field :name, value: (params[:user][:name] if params[:user]) %>-->
+    <%= form.label(:name, 'ユーザー名検索') %><br>
+    <%= form.text_field :name %>
+    <%= form.submit "検索", :name => nil, class: "btn btn-primary" %>
+  <% end %>
   <%= will_paginate %>
   <table class="table table-condensed table-hover" id="table-users">
     <thead>

@@ -7,6 +7,11 @@ class UsersController < ApplicationController
   
   def index
     @users = User.paginate(page: params[:page])
+      # if params[:user].present? && params[:user][:name]
+      #   User.where('LOWER(name) LIKE?', "%#{params[:user][:name].downcase}%")
+      # else
+      #   @users = User.paginate(page: params[:page]).search(params[:search].blank)
+      # end
   end
   
   def show
@@ -70,6 +75,10 @@ class UsersController < ApplicationController
     redirect_to edit_basic_info_user_url(@user)
   end
   
+  def search
+    @users = User.search(params[:search])
+  end
+  
   private
   
   def user_params
@@ -85,6 +94,9 @@ class UsersController < ApplicationController
     params.require(:user).permit(:basic_time, :work_time)
   end
   
+  def search_params
+    params.fetch(:search, {}).permit(:name)
+  end
   # beforeフィルター
   
   # # paramsハッシュからユーザーを取得します

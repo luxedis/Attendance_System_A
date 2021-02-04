@@ -14,6 +14,7 @@ Rails.application.routes.draw do
       patch 'update_all_users_basic_info' # ヘッダーから全ユーザーの勤務時間を一括更新
       get 'attendances/edit_one_month' # 勤怠編集ページのルート
       patch 'attendances/update_one_month' # 1ヶ月分まとめて更新ボタン
+      get 'search'
     end
     resources :attendances, only: :update # 出勤登録ボタン
   end
