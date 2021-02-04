@@ -6,13 +6,13 @@
 <% end %>  
   
 <div class="col-md-10 col-md-offset-1">
-  <%= form_with(scope: :search, url: users_path, method: :get, local: true) do |form| %>
-    <!--< %= f.label :search, "ユーザー名検索",  %><br>-->
-    <!--< %= form.search_field :name, value: (params[:user][:name] if params[:user]) %>-->
-    <%= form.label(:name, 'ユーザー名検索') %><br>
-    <%= form.text_field :name %>
-    <%= form.submit "検索", :name => nil, class: "btn btn-primary" %>
-  <% end %>
+  <div class="text-right">
+    <%= form_with(url: users_path, method: :get, local: true) do |f| %>
+      <%= f.label :name, 'ユーザー名検索' %>
+      <%= f.text_field :name, class: "search-name" %> <!--ここをnameで指定しているからusers_controllerでparams[:name]になる-->
+      <%= f.submit "検索", class: "btn btn-primary" %>
+    <% end %>
+  </div>
   <%= will_paginate %>
   <table class="table table-condensed table-hover" id="table-users">
     <thead>

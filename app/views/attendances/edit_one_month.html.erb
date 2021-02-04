@@ -18,7 +18,7 @@
       
       <tbody>
         <% @attendances.each do |day| %> <!-- @attendances= (@first_day..@last_day). -->
-          <%= f.fields_for "attendances[]", day do |attendance| %>
+          <%= f.fields_for "attendances[]", day do |attendance| %>  <!--form_withで指定したカラム以外のモデルを使いたい時は21行めのfields_forでカラムを変えてあげる-->
             <tr>
               <td><%= l(day.worked_on, format: :short) %></td> <!-- l(day, format: :short -->
               <td class='<%= "wday#{day.worked_on.wday}"%>'><%= $days_of_the_week[day.worked_on.wday] %></td> <!--[day.wday]-->

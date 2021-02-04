@@ -49,9 +49,9 @@ class User < ApplicationRecord
     update_attribute(:remember_digest, nil)
   end
   
-  def self.search(search) #このself.はUser.の意味
-    if search
-      User.where('name LIKE ?', "%#{serach}%")
+  def self.search(search) #このself.はUser.の意味(class Userだから) このserachにはnameパラメータが入る
+    if search #search空白じゃなければ空白になるからif文実行している、空だったらfaluseになるからelseになる
+      User.where('name LIKE ?', "%#{search}%")
     else
       User.all
     end

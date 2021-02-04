@@ -6,12 +6,11 @@ class UsersController < ApplicationController
   before_action :set_one_month, only: :show
   
   def index
-    @users = User.paginate(page: params[:page])
-      # if params[:user].present? && params[:user][:name]
-      #   User.where('LOWER(name) LIKE?', "%#{params[:user][:name].downcase}%")
-      # else
-      #   @users = User.paginate(page: params[:page]).search(params[:search].blank)
-      # end
+    # debugger
+    @users = User.paginate(page: params[:page]) # ここでページネートしている
+    if params[:name].present? # indexの13行目でtext_field :nameとしているからパラメータがnameになる
+      @users = @users.search(params[:name]) #10行めのメー児ねーとされたユーザーを更に検索する。
+    end
   end
   
   def show
@@ -75,9 +74,9 @@ class UsersController < ApplicationController
     redirect_to edit_basic_info_user_url(@user)
   end
   
-  def search
-    @users = User.search(params[:search])
-  end
+  # def search
+  #   @users = User.search(params[:search])
+  # end
   
   private
   
@@ -94,9 +93,10 @@ class UsersController < ApplicationController
     params.require(:user).permit(:basic_time, :work_time)
   end
   
-  def search_params
-    params.fetch(:search, {}).permit(:name)
-  end
+  # def search_params
+  #   params.fetch(:search, {}).permit(:name) # fetch/
+  # end
+  
   # beforeフィルター
   
   # # paramsハッシュからユーザーを取得します
