@@ -8,8 +8,8 @@ class UsersController < ApplicationController
   def index
     # debugger
     @users = User.paginate(page: params[:page]) # ここでページネートしている
-    if params[:name].present? # indexの13行目でtext_field :nameとしているからパラメータがnameになる
-      @users = @users.search(params[:name]) #10行めのメー児ねーとされたユーザーを更に検索する。
+    if params[:name].present? # index.html10行目付近でtext_field :nameとしているからここのパラメータがnameになる。パラメータが空の状態がデフォルトだから、もしパラメータにnameカラムが存在したら、となる。
+      @users = @users.search(params[:name]) #indexアクション(10行目)でページネート済みのユーザーを、更に検索するという意→先頭の@users。
     end
   end
   

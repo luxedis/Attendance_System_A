@@ -50,7 +50,7 @@ class User < ApplicationRecord
   end
   
   def self.search(search) #このself.はUser.の意味(class Userだから) このserachにはnameパラメータが入る
-    if search #search空白じゃなければ空白になるからif文実行している、空だったらfaluseになるからelseになる
+    if search # searchが空白じゃなければ空白になるからif文実行している、空だったらfalseになるからelseへ飛ぶ
       User.where('name LIKE ?', "%#{search}%")
     else
       User.all
