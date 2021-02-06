@@ -17,7 +17,7 @@ gem 'jbuilder',     '~> 2.5'
 gem 'rounding' # 勤怠表の分を15分に丸める
 
 group :development, :test do
-  gem 'sqlite3', '1.3.13'
+  # gem 'sqlite3', '1.3.13'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 end
 
@@ -26,6 +26,7 @@ group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'sqlite3', '1.3.13'
 end
 
 group :production do
