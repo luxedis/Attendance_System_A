@@ -30,19 +30,19 @@ module SessionsHelper
   # それ以外の場合はcookiesに対応するユーザーを返します。
   def current_user
     if (user_id = session[:user_id])
-      @current_user ||= User.find_by(id: user_id)
+      @current_user ||= User.find_by(id: user_id) #emailで探したid
     elsif (user_id = cookies.signed[:user_id])
       user = User.find_by(id: user_id)
       if user && user.authenticated?(cookies[:remember_token])
-        log_in user
-        @current_user = user
+        log_in user # log_inにuserという引数を渡している
+        @current_user = user #35行目のuserだからviewに渡す必要がないからこの書き方このコントローラで完結するカラム名だから@入らない
       end
     end
   end
   
   # 渡されたユーザーがログイン済みのユーザーであればtrueを返します。
-  def current_user?(user)
-    user == current_user
+  def current_user?(user) # @userがセットされる
+    user == current_user #31行目からのcurrent_user/@current_userの中身を観にいっている。
   end
   
   # 現在ログイン中のユーザーがいればtrue,そうでなければfalseを返します。

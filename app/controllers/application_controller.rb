@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   
   # paramsハッシュからユーザーを取得します
   def set_user
-    @user = User.find(params[:id])
+    @user = User.find(params[:id]) #urlから拾ったidを使ってUserモデルを検索しにいく、検索したレコードを@user に入れている
   end
   
   # ログイン済みのユーザーか確認する。
@@ -23,6 +23,7 @@ class ApplicationController < ActionController::Base
   
   # アクセスしたユーザーが現在ログインしているユーザーか確認します。
   def correct_user
+    @user = User.find(params[:id])
    redirect_to(root_url) unless current_user?(@user)
   end
   

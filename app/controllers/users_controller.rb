@@ -3,6 +3,7 @@ class UsersController < ApplicationController
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info]
+  before_action :admin_or_correct_user, only: :show
   before_action :set_one_month, only: :show
   
   def index
@@ -26,7 +27,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      log_in @user # 保存成功語、ログインします。
+      log_in (@user) # log_inはsessions_contorllerのloginは走る/保存成功語、ログインします。
       flash[:success] = '新規作成に成功しました'
       redirect_to @user
     else
@@ -98,6 +99,13 @@ class UsersController < ApplicationController
   # end
   
   # beforeフィルター
+  def admin_or_correct_user
+    # @user = User.find(params[:id]) if @user.blank? #id1のユーザーを探してそのレコードを@userに入れてあげるbefore_actionでset_use してるから
+    unless current_user?(@user) || current_user.admin? #current_userが@userじゃない、current_userがadminだから入らないunless文はどちらかがtuireだと入らない 
+      flash[:danger] = "編集権限がありません。"
+      redirect_to(root_url)
+    end
+  end
   
   # # paramsハッシュからユーザーを取得します
   # def set_user
