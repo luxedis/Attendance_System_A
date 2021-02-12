@@ -15,3 +15,5 @@ User.create!(name: "Sample User",
                password: password,
                password_confirmation: password)
 end
+
+puts 'user作成成功!'
