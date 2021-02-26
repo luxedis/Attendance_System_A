@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  hub_number: 1
+  name: MyString
+  attendance: MyString
+
+two:
+  hub_number: 1
+  name: MyString
+  attendance: MyString

@@ -4,7 +4,7 @@
     <tr>
       <td>
         <%= link_to "◀️", user_path(date: @first_day.prev_month), class: "btn btn-info" %>
-        【<%= l(@first_day, format: :middle) %>】勤怠管理表
+        【<%= l(@first_day, format: :middle) %>】時間管理表
         <%= link_to "▶️", user_path(date: @first_day.next_month), class: "btn btn-info" %>
         </td>
       <td>指定勤務開始時間<%= format_basic_info(@user.work_time) %><br>
@@ -24,6 +24,7 @@
   </table>
 </div>
 
+<!-- 勤怠テーブル情報区分 -->
 <div>
   <table class="table table-bordered table-condensed table-hover" id="table-attendances">
     <thead>
@@ -56,6 +57,7 @@
       </tr>
     </thead>
     
+    <!--各種処理区分-->
     <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(@user, date: @first_day), class: "btn btn-primary" %>
     <%= link_to "CSV出力", '#', class: "btn btn-primary" %><br>
     <%= link_to "勤怠修正ログ（承認済）", '#', class: "btn btn-primary" %>
@@ -93,13 +95,16 @@
     <tfoot>
       <!--rowspan:縦結合, colspan:横結合-->
       <tr>
-        <td colspan="2">累計日数</td>
-        <td colspan="2">総合勤務時間</td>
-        <td colspan="2">累計在社時間</td>
+        <td></td>
+        <td colspan="2"></td>
+        <td colspan="6"></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
+        <td>
+          <!--1ヶ月勤怠所属ちょう承認申請-->
+          <%= "所属長承認　未" %><br>
+          <!--< %= f.submit "申請", class: "btn btn-primary btn-block" %>-->
+        </td>
       </tr>
       <tr>
         <td colspan="2"><%= @attendances.count %></td>
