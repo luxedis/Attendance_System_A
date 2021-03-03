@@ -1,2 +1,20 @@
-<h1>Hubs#index</h1>
-<p>Find me in app/views/hubs/index.html.erb</p>
+<% provide(:title, 'Hubs') %>
+<% provide(:class_text, 'hub') %>
+<% provide(:button_text, '作成する') %>
+<%= render '' %>
+<h1>拠点一覧</h1>
+
+<div class="col-md-10 col-md-offset-1">
+  <table class="table table-striped table-bordered table-condensed table-hover" id="table-hubs">
+    <htead>
+      <tr>
+        <th></th>
+        <th></th>
+        <th class="center">拠点番号</th>
+        <th class="center">拠点名</th>
+        <th class="center">勤怠種類</th>
+      </tr>
+    </htead>
+    
+  </table>
+</div>
