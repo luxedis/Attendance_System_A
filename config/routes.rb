@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get 'hubs/index'
+
+  get 'hubs/show'
+
   root 'static_pages#top'
   get '/signup', to: 'users#new'
   
@@ -9,12 +13,15 @@ Rails.application.routes.draw do
   
   resources :users do
     member do
-      get 'edit_basic_info'
-      patch 'update_basic_info'
+      get 'edit_basic_info' # 基本情報編集
+      patch 'update_basic_info' # 基本情報更新
       patch 'update_all_users_basic_info' # ヘッダーから全ユーザーの勤務時間を一括更新
       get 'attendances/edit_one_month' # 勤怠編集ページのルート
       patch 'attendances/update_one_month' # 1ヶ月分まとめて更新ボタン
     end
     resources :attendances, only: :update # 出勤登録ボタン
   end
+  
+  # 拠点情報
+  resources :hubs
 end
