@@ -1,7 +1,7 @@
 <% provide(:title, 'Hubs') %>
 <% provide(:class_text, 'hub') %>
 <% provide(:button_text, '作成する') %>
-<%= render '' %>
+<%= render 'shared/error_messages', object: @hubs %>
 <h1>拠点一覧</h1>
 
 <div class="col-md-10 col-md-offset-1">
@@ -16,5 +16,8 @@
       </tr>
     </htead>
     
+    <tbody>
+      <!--拠点の繰り返し処理-->
+    </tbody>
   </table>
 </div>
