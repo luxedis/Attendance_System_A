@@ -3,7 +3,7 @@ class HubsController < ApplicationController
   before_action :admin_user
   
   def index
-    @hub = Hub.new
+    @hubs = Hub.all
   end
 
   def show
@@ -49,6 +49,6 @@ class HubsController < ApplicationController
   end
   
   def hub_params
-    params.require(:hub).permit(:hub_nimber, :name, :attendance)
+    params.require(:hub).permit(:hub_number, :name, :attendance)
   end
 end
