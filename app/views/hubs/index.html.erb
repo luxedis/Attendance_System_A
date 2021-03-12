@@ -17,7 +17,46 @@
     </htead>
     
     <tbody>
-      <!--くり返し処理-->
+      <% if @hubs != nil %>
+        <% @hubs.each do |hub| %>
+          <tr>
+            <td>
+              <button type="button" data-toggle="collapse" data-target="#<%= hub.hub_number %>" class="btn btn-primary">修正</button>
+            </td>
+            <td>
+              <%= link_to "削除", hub, method: :delete, data: {confirm: "削除してよろしいですか？"}, class: "btn btn-primary" %>
+            </td>
+            <td class="center"><%= hub.hub_number %></td>
+            <td class="center"><%= hub.name %></td>
+            <td class="center"><%= hub.attendance %></td>
+          </tr>
+          <tr>
+            <td>
+              <div id="<%= hub.hub_number %>" class="collapse">
+                <div class="panel-body">
+                  <% @hub = hub %>
+                  <%= render partial: 'edit_form', locals: { hub: @hub} %>
+                </div>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
     </tbody>
   </table>
+  
+  <tr>
+    <td>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <button type="button" data-toggle="collapse" data-target="#add_hub" class="btn btn-lg btn-primary">拠点情報追加</button>
+        </div>
+        <div id="add_hub" class="collapse">
+          <div class="panel-body">
+            <%= render partial: 'new_form', locals: { hub: @hubs } %>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
 </div>

@@ -65,15 +65,26 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
   
-  def update_all_users_basic_info
-    if User.update(update_all_users_basic_info_params)
-      # User.update_all(:basic_time => params[:user][:basic_time], :work_time => params[:user][:work_time]) #update_allはストロングパラが使えないので。上記と動きは同じ
-      flash[:success] = "全ユーザーの基本情報を更新しました。"
-    else
-      flash[:danger] = "全ユーザーの更新は失敗しました。<br>" + @user.errors.full_messages.join("<br>")
-    end
-    redirect_to edit_basic_info_user_url(@user)
+  # 出勤中の社員一覧
+  def working_index
   end
+  
+  # CSVファイルのインポート
+  def import
+  end
+  
+  # 勤怠ログ
+  def attendance_log
+  end
+  # def update_all_users_basic_info
+  #   if User.update(update_all_users_basic_info_params)
+  #     # User.update_all(:basic_time => params[:user][:basic_time], :work_time => params[:user][:work_time]) #update_allはストロングパラが使えないので。上記と動きは同じ
+  #     flash[:success] = "全ユーザーの基本情報を更新しました。"
+  #   else
+  #     flash[:danger] = "全ユーザーの更新は失敗しました。<br>" + @user.errors.full_messages.join("<br>")
+  #   end
+  #   redirect_to edit_basic_info_user_url(@user)
+  # end
   
   # def search
   #   @users = User.search(params[:search])

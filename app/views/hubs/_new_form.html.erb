@@ -1,0 +1,13 @@
+<%= form_with(model: hub, url: hubs_path, local: true, method: :post) do |f| %>
+
+  <%= f.label :hub_number, class: "label-#{yield(:class_text)}" %>
+  <%= f.text_field :hub_number, class: "form-control"  %>
+  
+  <%= f.label :name, class: "label-#{yield(:class_text)}" %>
+  <%= f.text_field :name, class: "form-control"  %>
+  
+  <%= f.label :attendance, class: "label-#{yield(:class_text)}" %>
+  <%= f.text_field :attendance, class: "form-control"  %>
+  
+  <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
+<% end %>

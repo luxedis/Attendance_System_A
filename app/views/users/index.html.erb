@@ -1,11 +1,15 @@
 <% provide(:title, 'All Users') %>
 
-<% if params[:name].present? %>
-  <h1>検索結果</h1>
-<% else %>
-  <h1>ユーザー一覧</h1>
+<!--< % if params[:name].present? %>-->
+<!--  <h1>検索結果</h1>-->
+<!--< % else %>-->
+<h1>ユーザー一覧</h1>
+<!--< % end %>-->
+<%= form_with url:'CVSのインポート', local: true do |f| %>
+  <%= f.file_field :file %><br>
+  <%= f.submit "CSVをインポート", class: "btn btn-primary" %>
 <% end %>
-  
+
 <div class="col-md-10 col-md-offset-1">
   <div class="text-right">
     <%= form_with(url: users_path, method: :get, local: true) do |f| %>
