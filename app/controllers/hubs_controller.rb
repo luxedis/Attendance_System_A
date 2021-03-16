@@ -4,14 +4,15 @@ class HubsController < ApplicationController
   
   def index
     @hubs = Hub.all
+    @hub = Hub.new
   end
 
   def show
   end
   
-  def new
-    @hub = Hub.new
-  end
+  # def new
+  #   @hub = Hub.new
+  # end
   
   def create
     @hub = Hub.new(hub_params)
