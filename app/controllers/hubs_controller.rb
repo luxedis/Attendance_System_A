@@ -1,7 +1,4 @@
 class HubsController < ApplicationController
-<<<<<<< HEAD
-end
-=======
   before_action :set_hub, only: [:show, :edit, :update, :destroy]
   before_action :admin_user
   
@@ -56,4 +53,3 @@ end
     params.require(:hub).permit(:hub_number, :name, :attendance)
   end
 end
->>>>>>> 拠点一覧
