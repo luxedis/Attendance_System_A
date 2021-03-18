@@ -66,7 +66,8 @@ class UsersController < ApplicationController
   end
   
   # 出勤中の社員一覧
-  def working_index
+  def at_work_index
+    @users = User.all.includes(:attendances)
   end
   
   # CSVファイルのインポート

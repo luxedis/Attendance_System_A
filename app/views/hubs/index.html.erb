@@ -23,7 +23,7 @@
             <button type="button" data-toggle="collapse" data-target="#<%= hub.hub_number %>" class="btn btn-primary">修正</button> <!--data-target=#この#はidの意味-->
             <div id="<%= hub.hub_number %>" class="collapse">
               <div class="panel-body">
-                <%= render partial: 'form', locals: { hub: hub } %> <!--左のhubはローカル変数(_form。htmlに渡す変数のこと)で、右の値を格納,_edit_formの変数として渡すhub, 右が21行目でeachしたhub-->
+                <%= render partial: 'form', locals: { hub: hub } %> <!--左のhubはローカル変数(_form.htmlに渡す変数のこと)で、右の値を格納, 右が21行目でeachしたhub-->
               </div>
             </div>
           </td>
