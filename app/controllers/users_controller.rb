@@ -67,7 +67,9 @@ class UsersController < ApplicationController
   
   # 出勤中の社員一覧
   def at_work_index
-    @users = User.all.includes(:attendances)
+    @users = User.includes(:attendances).references(:attendances)
+    .where('attendances.started_at IS NOT NULL').where('attendances.finished_at IS NULL')                                       
+    # byebug
   end
   
   # CSVファイルのインポート
