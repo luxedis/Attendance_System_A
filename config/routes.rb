@@ -20,6 +20,7 @@ Rails.application.routes.draw do
       patch 'attendances/update_one_month' # 1ヶ月分まとめて更新ボタン
     end
     collection do
+      post :import # csvのインポート
       get :at_work_index # 出勤中社員一覧
     end
     

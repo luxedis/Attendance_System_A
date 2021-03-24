@@ -6,13 +6,17 @@
 <!--< % else %>-->
 <h1>ユーザー一覧</h1>
 
-<div class="row container">
+<div class="csv_holder">
   <div class="col-md-4 col-md-offset-1">
-    <%= form_with(url: users_path, method: :get, local: true) do |f| %>
-      <%= f.submit 'ファイルを選択' %>
-      <%= f.text_field :search %>
+    <%= form_with(url: import_users_path, method: :post) do |f| %> <!--multipart: trueはform_with内にf.file_fieldがあれば自動適用される-->
+      <%= f.file_field :file, accept: '.csv', 'ファイルを選択' %> <!--accept: '.csv'でcsvファイルのみ選択される-->
+      <%= f.submit "CSVをインポート" %>
+      
+      <% if @errors.present? %>
+        <% @errors.each do |error| %>
+          <% error[:message].each do |msg| %>
+            <li><%= "#{error[:row]}" %></li>
     <% end %>
-    <%= link_to "CSVをインポート", "#", class: "btn col-md-9 btn-primary" %>
   </div>
 </div>
 
