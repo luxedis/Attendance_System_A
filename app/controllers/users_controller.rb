@@ -1,5 +1,4 @@
 class UsersController < ApplicationController
-  include CSVImport
   before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info]
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info]
   before_action :correct_user, only: [:edit, :update]
@@ -75,7 +74,9 @@ class UsersController < ApplicationController
   
   # CSVファイルのインポート
   def import
-    @errors = import(params[:file])
+    User.import(params[:file])
+    byebug
+    redirect_to users_url
   end
   
   # 勤怠ログ

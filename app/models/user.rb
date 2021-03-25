@@ -57,4 +57,21 @@ class User < ApplicationRecord
       User.all
     end
   end
+  
+  # scv import
+  def self.import(file) # ここのselfはページ上部のclass Userのuserの意味なので self=Userの意
+    CSV.foreach(file.path, headers: true) do |row|
+      # IDが見付かればレコードを呼び出し、見つからなければ新しくユーザーを作成
+      user.find_by(name: row["name"]) || new
+      # csvからデータを取得、設定する
+      user.attributes = row.to_hash.silce(*update_attributes)
+      # 保存
+      user.save
+    end
+  end
+  
+  # 更新を許可するカラムを定義する
+  def self.update_attributes
+    ["name", "email", "affiliation", "employee_number", "uid", "basic_work_time", "designated_work_start_time", "designated_work_end_time", "superior", "admin", "password"]
+  end
 end

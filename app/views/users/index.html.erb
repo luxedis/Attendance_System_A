@@ -9,13 +9,8 @@
 <div class="csv_holder">
   <div class="col-md-4 col-md-offset-1">
     <%= form_with(url: import_users_path, method: :post) do |f| %> <!--multipart: trueはform_with内にf.file_fieldがあれば自動適用される-->
-      <%= f.file_field :file, accept: '.csv', 'ファイルを選択' %> <!--accept: '.csv'でcsvファイルのみ選択される-->
+      <%= f.file_field :file, accept: '.csv' %> <!--accept: '.csv'でcsvファイルのみ選択される-->
       <%= f.submit "CSVをインポート" %>
-      
-      <% if @errors.present? %>
-        <% @errors.each do |error| %>
-          <% error[:message].each do |msg| %>
-            <li><%= "#{error[:row]}" %></li>
     <% end %>
   </div>
 </div>
