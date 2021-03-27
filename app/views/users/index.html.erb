@@ -15,31 +15,31 @@
   </div>
 </div>
 
+<div class="col-md-10 col-md-offset-1">
   <%= will_paginate %>
-  <div class="col-md-10 col-md-offset-1">
-    <table class="table table-condensed table-hover" id="table-users">
-      <% @users.each do |user| %>
-        <tr>
-          <td><%= user.name %></br>
-            <% if current_user.admin? && !current_user?(user) %>
-              <%= link_to "削除", user, method: :delete,
-                data: { confirm: "削除してよろしいですか？" }, class: "btn btn-primary" %>
-              <div classs="panel panel-default">
-                <div class="panel-heading">
-                  <button type="button" data-toggle="collapse" data-target="#<%= user.id %>" class="btn btn-lg brn-primary">編集</button>
-                </div>
-                <div id="<%= user.id %>" class="collapse">
-                  <div class="panel-body">
-                    <% @user =user %>
-                    <%= render 'edit_index_form' %>
-                  </div>
+  <table class="table table-condensed table-hover" id="table-users">
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.name %></br>
+          <% if current_user.admin? && !current_user?(user) %>
+            <%= link_to "削除", user, method: :delete,
+              data: { confirm: "削除してよろしいですか？" }, class: "btn btn-primary" %>
+            <div classs="panel panel-default">
+              <div class="panel-heading">
+                <button type="button" data-toggle="collapse" data-target="#<%= user.id %>" class="btn btn-lg brn-primary">編集</button>
+              </div>
+              <div id="<%= user.id %>" class="collapse">
+                <div class="panel-body">
+                  <% @user = user %>
+                  <%= render 'edit_index_form' %>
                 </div>
               </div>
-            <% end %>
-          </td>
-        </tr>
-      <% end %>
-    </table>
+            </div>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
   <%= will_paginate %>
 </div>
 

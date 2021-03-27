@@ -8,6 +8,7 @@ class UsersController < ApplicationController
   
   def index
     # debugger
+    @users = User.all
     @users = User.paginate(page: params[:page]) # ここでページネートしている
     if params[:name].present? # index.html10行目付近でtext_field :nameとしているからここのパラメータがnameになる。パラメータが空の状態がデフォルトだから、もしパラメータにnameカラムが存在したら、となる。
       @users = @users.search(params[:name]) #indexアクション(10行目)でページネート済みのユーザーを、更に検索するという意→先頭の@users。
@@ -75,7 +76,6 @@ class UsersController < ApplicationController
   # CSVファイルのインポート
   def import
     User.import(params[:file])
-    byebug
     redirect_to users_url
   end
   
@@ -143,7 +143,7 @@ class UsersController < ApplicationController
 #     redirect_to(root_url) unless current_user?(@user)
 #   end
   
-#   # システム管理権限所有者か判定します。
+#   # システム管理権限所有��か判定します。
 #   def admin_user
 #     redirect_to root_url unless current_user.admin?
 #   end
