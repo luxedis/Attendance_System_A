@@ -62,7 +62,7 @@ class User < ApplicationRecord
   def self.import(file) # ここのselfはページ上部のclass Userのuserの意味なので self=Userの意
     CSV.foreach(file.path, headers: true, encoding: 'Shift_JIS:UTF-8') do |row|
       # IDが見付かればレコードを呼び出し、見つからなければ新しくユーザーを作成
-      user = User.find_by(email: row["enail"]) || User.new
+      user = User.find_by(email: row["email"]) || User.new
       # csvからデータを取得、設定する
       user.attributes = row.to_hash.slice(*update_attributes)
       # 保存
