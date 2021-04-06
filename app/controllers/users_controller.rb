@@ -8,6 +8,7 @@ class UsersController < ApplicationController
   
   def index
     # debugger
+    @users = User.all
     @users = User.paginate(page: params[:page]) # ここでページネートしている
     if params[:name].present? # index.html10行目付近でtext_field :nameとしているからここのパラメータがnameになる。パラメータが空の状態がデフォルトだから、もしパラメータにnameカラムが存在したら、となる。
       @users = @users.search(params[:name]) #indexアクション(10行目)でページネート済みのユーザーを、更に検索するという意→先頭の@users。
@@ -65,15 +66,31 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
   
-  def update_all_users_basic_info
-    if User.update(update_all_users_basic_info_params)
-      # User.update_all(:basic_time => params[:user][:basic_time], :work_time => params[:user][:work_time]) #update_allはストロングパラが使えないので。上記と動きは同じ
-      flash[:success] = "全ユーザーの基本情報を更新しました。"
-    else
-      flash[:danger] = "全ユーザーの更新は失敗しました。<br>" + @user.errors.full_messages.join("<br>")
-    end
-    redirect_to edit_basic_info_user_url(@user)
+  # 出勤中の社員一覧
+  def at_work_index
+    @users = User.includes(:attendances).references(:attendances)
+    .where('attendances.started_at IS NOT NULL').where('attendances.finished_at IS NULL')                                       
+    # byebug
   end
+  
+  # CSVファイルのインポート
+  def import
+    User.import(params[:file])
+    redirect_to users_url
+  end
+  
+  # 勤怠ログ
+  def attendance_log
+  end
+  # def update_all_users_basic_info
+  #   if User.update(update_all_users_basic_info_params)
+  #     # User.update_all(:basic_time => params[:user][:basic_time], :work_time => params[:user][:work_time]) #update_allはストロングパラが使えないので。上記と動きは同じ
+  #     flash[:success] = "全ユーザーの基本情報を更新しました。"
+  #   else
+  #     flash[:danger] = "全ユーザーの更新は失敗しました。<br>" + @user.errors.full_messages.join("<br>")
+  #   end
+  #   redirect_to edit_basic_info_user_url(@user)
+  # end
   
   # def search
   #   @users = User.search(params[:search])
@@ -126,7 +143,7 @@ class UsersController < ApplicationController
 #     redirect_to(root_url) unless current_user?(@user)
 #   end
   
-#   # システム管理権限所有者か判定します。
+#   # システム管理権限所有��か判定します。
 #   def admin_user
 #     redirect_to root_url unless current_user.admin?
 #   end

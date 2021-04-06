@@ -10,8 +10,15 @@ User.create!(name: "Sample User",
   name  = Faker::Name.name
   email = "sample-#{n+1}@email.com"
   password = "password"
+  employee_number = n+1
+  uid = "カードID_#{n+1}"
   User.create!(name: name,
                email: email,
+               employee_number: employee_number,
+               uid: uid, 
                password: password,
-               password_confirmation: password)
+               password_confirmation: password
+               )
 end
+
+puts 'user作成成功!'

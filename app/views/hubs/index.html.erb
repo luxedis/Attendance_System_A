@@ -1,0 +1,53 @@
+<% provide(:title, 'Hubs') %>
+<% provide(:class_text, 'hub') %>
+<% provide(:button_text, '作成する') %>
+<!--< %= render 'shared/error_messages', object: @hubs %>-->
+<h1>拠点一覧</h1>
+
+<div class="col-md-10 col-md-offset-1">
+  <table class="table table-striped table-bordered table-condensed table-hover" id="table-hubs">
+    <htead>
+      <tr>
+        <th></th>
+        <th></th>
+        <th class="center">拠点番号</th>
+        <th class="center">拠点名</th>
+        <th class="center">勤怠種類</th>
+      </tr>
+    </htead>
+    
+    <tbody>
+      <% @hubs.each do |hub| %>
+        <tr>
+          <td>
+            <button type="button" data-toggle="collapse" data-target="#<%= hub.hub_number %>" class="btn btn-primary">修正</button> <!--data-target=#この#はidの意味-->
+            <div id="<%= hub.hub_number %>" class="collapse">
+              <div class="panel-body">
+                <%= render partial: 'form', locals: { hub: hub } %> <!--左のhubはローカル変数(_form.htmlに渡す変数のこと)で、右の値を格納, 右が21行目でeachしたhub-->
+              </div>
+            </div>
+          </td>
+          <td>
+            <%= link_to "削除", hub, method: :delete, data: {confirm: "削除してよろしいですか？"}, class: "btn btn-primary" %>
+          </td>
+          <td class="center"><%= hub.hub_number %></td>
+          <td class="center"><%= hub.name %></td>
+          <td class="center"><%= hub.attendance %></td>
+        </tr>
+      <% end %>
+    </tbody>
+    
+    <tfoot>
+      <tr>
+        <td>
+          <button type="button" data-toggle="collapse" data-target="#add_hub" class="btn btn-lg btn-primary">拠点情報追加</button>
+          <div id="add_hub" class="collapse"> <!--idがadd_hubだったらアコーディオンを開く-->
+            <div class="panel-body">
+              <%= render partial: 'form', locals: { hub: @hub } %> <!--この@hubはhubs_controllerのindexの@hub = Hub.new-->
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>

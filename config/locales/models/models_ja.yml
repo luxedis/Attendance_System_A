@@ -3,14 +3,18 @@ ja:
     models:
       user: ユーザー
       attendance: 勤怠
+      hub: 拠点
     attributes:
         user:
           id: ID
           name: 名前
           email: メールアドレス
-          department: 所属
-          basic_time: 基本時間
-          work_time: 勤務時間
+          affiliation: 所属
+          employee_number: 社員番号
+          uid: カードID
+          basic_work_time: 基本勤務時間
+          designated_work_start_time: 指定勤務開始時間
+          designated_work_end_time: 指定勤務終了時間
           password: パスワード
           password_confirmation: パスワード再入力
           created_at: 作成日
@@ -21,3 +25,7 @@ ja:
           finished_at: 退勤時間
           note: 備考
           user: ユーザーID
+        hub:
+          hub_number: 拠点番号
+          name: 拠点名
+          attendance: 拠点種類

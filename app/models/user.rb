@@ -9,9 +9,10 @@ class User < ApplicationRecord
   validates :email, presence: true, length: { maximum: 100 },
                     format: { with: VALID_EMAIL_REGEX },
                     uniqueness: true
-  validates :department, length: { in: 2..30 }, allow_blank: true
-  validates :basic_time, presence: true
-  validates :work_time, presence: true
+  validates :affiliation, length: { in: 2..30 }, allow_blank: true # ユーザーの所属
+  validates :basic_work_time, presence: true # ユーザーの基本勤務時間
+  validates :designated_work_start_time, presence: true # ユーザーの指定勤務開始時間
+  validates :designated_work_end_time, presence: true # ユーザーの指定勤務終了時間
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
   
@@ -55,5 +56,22 @@ class User < ApplicationRecord
     else
       User.all
     end
+  end
+  
+  # scv import
+  def self.import(file) # ここのselfはページ上部のclass Userのuserの意味なので self=Userの意
+    CSV.foreach(file.path, headers: true, encoding: 'Shift_JIS:UTF-8') do |row|
+      # IDが見付かればレコードを呼び出し、見つからなければ新しくユーザーを作成
+      user = User.find_by(email: row["email"]) || User.new
+      # csvからデータを取得、設定する
+      user.attributes = row.to_hash.slice(*update_attributes)
+      # 保存
+      user.save
+    end
+  end
+  
+  # 更新を許可するカラムを定義する
+  def self.update_attributes
+    ["name", "email", "affiliation", "employee_number", "uid", "basic_work_time", "designated_work_start_time", "designated_work_end_time", "superior", "admin", "password"]
   end
 end

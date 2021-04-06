@@ -15,6 +15,7 @@ gem 'jquery-rails'
 gem 'turbolinks',   '~> 5'
 gem 'jbuilder',     '~> 2.5'
 gem 'rounding' # 勤怠表の分を15分に丸める
+gem 'roo' # CSVインポート
 
 group :development, :test do
   # gem 'sqlite3', '1.3.13'

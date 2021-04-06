@@ -1,51 +1,40 @@
 <% provide(:title, 'All Users') %>
+<% provide(:button_text, '編集する') %>
 
-<% if params[:name].present? %>
-  <h1>検索結果</h1>
-<% else %>
-  <h1>ユーザー一覧</h1>
-<% end %>
-  
-<div class="col-md-10 col-md-offset-1">
-  <div class="text-right">
-    <%= form_with(url: users_path, method: :get, local: true) do |f| %>
-      <%= f.label :name, 'ユーザー名検索　　　　　　　　' %><br>
-      <%= f.text_field :name, class: "search-name" %> <!--ここをnameで指定しているからusers_controllerでparams[:name]になる-->
-      <%= f.submit "検索", class: "btn btn-primary" %>
+<!--< % if params[:name].present? %>-->
+<!--  <h1>検索結果</h1>-->
+<!--< % else %>-->
+<h1>ユーザー一覧</h1>
+
+<div class="csv_holder">
+  <div class="col-md-4 col-md-offset-1">
+    <%= form_with(url: import_users_path, method: :post) do |f| %> <!--multipart: trueはform_with内にf.file_fieldがあれば自動適用される-->
+      <%= f.file_field :file, accept: '.csv' %> <!--accept: '.csv'でcsvファイルのみ選択される-->
+      <%= f.submit "CSVをインポート" %>
     <% end %>
   </div>
+</div>
+
+<div class="col-md-10 col-md-offset-1">
   <%= will_paginate %>
   <table class="table table-condensed table-hover" id="table-users">
-    <thead>
-      <tr>
-        <th><%= User.human_attribute_name :name %></th>
-        <th class="center"><%= User.human_attribute_name :department %></th>
-        <% if current_user.admin? %>
-          <th class="center"><%= User.human_attribute_name :basic_time %></th>
-          <th class="center"><%= User.human_attribute_name :work_time %></th>
-        <% end %>
-      </tr>
-    </thead>
-    
     <% @users.each do |user| %>
       <tr>
-        <td>
-          <% if current_user.admin? %>
-            <%= link_to user.name, user %>
-          <% else %>
-            <%= user.name %>
-          <% end %>
-        </td>
-        <td class="center"><%= user.department.present? ? user.department : "未所属" %></td>
-        <% if current_user.admin? %>
-          <td class="center"><%= format_basic_info(user.basic_time) %></td>
-          <td class="center"><%= format_basic_info(user.work_time) %></td>
-        <% end %>
-        <td class="center">
+        <td><%= user.name %></br>
           <% if current_user.admin? && !current_user?(user) %>
-            <%= link_to "基本情報編集", edit_basic_info_user_path(user), remote: true, class: "btn btn-success" %>
             <%= link_to "削除", user, method: :delete,
-              data: { confirm: "削除してよろしいですか？" }, class: "btn btn-danger" %>
+              data: { confirm: "削除してよろしいですか？" }, class: "btn btn-primary" %>
+            <div classs="panel panel-default">
+              <div class="panel-heading">
+                <button type="button" data-toggle="collapse" data-target="#<%= user.id %>" class="btn btn-lg brn-primary">編集</button>
+              </div>
+              <div id="<%= user.id %>" class="collapse">
+                <div class="panel-body">
+                  <% @user = user %>
+                  <%= render 'edit_index_form' %>
+                </div>
+              </div>
+            </div>
           <% end %>
         </td>
       </tr>
@@ -55,4 +44,4 @@
 </div>
 
 <!--モーダルウィンドウ表示-->
-<div id="edit-basic-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<!--<div id="edit-basic-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>-->
