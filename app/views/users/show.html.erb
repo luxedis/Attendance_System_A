@@ -61,12 +61,12 @@
     
     <!--各種処理区分-->
     <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(@user, date: @first_day), class: "btn btn-primary" %>
-    <%= link_to "CSV出力", '#', class: "btn btn-primary" %><br>
+    <%= link_to "CSV出力", user_path(@user, date: @first_day, format: :csv), class: "btn btn-primary" %><br>
     <%= link_to "勤怠修正ログ（承認済）", '#', class: "btn btn-primary" %>
     <tbody>
       <% @attendances.each do |day| %> <!-- @attendances= (@first_day..@last_day). -->
         <tr>
-          <td><%= link_to "残業申請", '#', class: "btn btn-parimary" %></td>
+          <td><%= link_to "残業申請", '#', class: "btn btn-primary" %></td>
           <td><%= l(day.worked_on, format: :short) %></td> <!-- l(day, format: :short -->
           <td class='<%= "wday#{day.worked_on.wday}"%>'><%= $days_of_the_week[day.worked_on.wday] %></td> <!--[day.wday]-->
           <td><%= format_hour(day.started_at) if day.started_at.present? %></td> <!--l(day.started_at, format: :time)-->

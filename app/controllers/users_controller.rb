@@ -6,6 +6,8 @@ class UsersController < ApplicationController
   before_action :admin_or_correct_user, only: :show
   before_action :set_one_month, only: :show
   
+require 'csv'
+
   def index
     # debugger
     @users = User.all
@@ -17,6 +19,12 @@ class UsersController < ApplicationController
   
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count
+    respond_to do |format|
+      format.html
+      format.csv do
+        send_data render_to_string, filename: "勤怠一覧表.csv", type: :csv
+      end
+    end
     # @first_day = Date.current.beginning_of_month
     # @last_day = @first_day.end_of_month
   end
@@ -78,6 +86,7 @@ class UsersController < ApplicationController
     User.import(params[:file])
     redirect_to users_url
   end
+
   
   # 勤怠ログ
   def attendance_log
