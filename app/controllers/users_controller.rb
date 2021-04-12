@@ -87,10 +87,6 @@ require 'csv'
     redirect_to users_url
   end
 
-  # 残業申請
-  def edit_overwork_request
-  end
-
   # 勤怠ログ
   def attendance_log
   end

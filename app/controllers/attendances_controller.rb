@@ -55,6 +55,27 @@ class AttendancesController < ApplicationController
     redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
   
+  # 残業申請
+  def edit_overwork_request
+    @user = User.find(params[:user_id])
+    @attendance = Attendance.find(params[:id])
+    @superiors = User.where(superior: true).where.not(id: @user.id)
+  end
+
+  # 残業申請のupdate
+  def update_overwork_request
+    @user = User.find(params[:user_id])
+    @attendance =  @user.attendances.find(params[:id])
+    if # params[:業務処理内容].blank? || params[:attendance][:指示者確認印]
+      flash[:danger] = "未入力の項目があります"
+    else
+      # 残業申請中&&支持者承認印が未だの時="申請中"のメッセージ
+      # 
+      flash[:success] = "残業を申請しました"
+    end
+    redirect_to @user
+  end
+
   private
     # 1ヶ月分の勤怠情報を扱う
     def attendances_params

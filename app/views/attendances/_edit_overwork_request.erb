@@ -7,7 +7,7 @@
     </div>
     <div class="modal-body">
       <h2 class="modal-title">【残業申請】</h2>
-      <%= form_with(model: @user, url: edit_overwork_request_user_path(@user, @attendance), local: true, method: :patch) do |f| %>
+      <%= form_with(model: @attendance, url: update_overwork_request_user_attendance_path(@user, @attendance), local: true, method: :patch) do |f| %>
         <div class="row">
           <div class="col-md-10 col-md-offset-1">
             <table class="table table-striped table-bordered table-condensed table-hover">
