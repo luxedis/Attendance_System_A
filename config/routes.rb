@@ -18,6 +18,7 @@ Rails.application.routes.draw do
       patch 'update_all_users_basic_info' # ヘッダーから全ユーザーの勤務時間を一括更新
       get 'attendances/edit_one_month' # 勤怠編集ページのルート
       patch 'attendances/update_one_month' # 1ヶ月分まとめて更新ボタン
+      get 'edit_overwork_request' # 残業申請モーダル
     end
     collection do
       post :import # csvのインポート
