@@ -69,7 +69,7 @@ class AttendancesController < ApplicationController
     if # params[:業務処理内容].blank? || params[:attendance][:指示者確認印]
       flash[:danger] = "未入力の項目があります"
     else
-      # 残業申請中&&支持者承認印が未だの時="申請中"のメッセージ
+      # 残業申請中&&支持者承認印が未だの時="申請中"
       # 
       flash[:success] = "残業を申請しました"
     end

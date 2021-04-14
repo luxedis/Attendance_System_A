@@ -23,13 +23,13 @@
               </thead>
               <tbody>
                 <tr>
-                  <td class="center"><%= l(@attendance.worked_on, format: :short) %></td>
-                  <td class="center"><%= $days_of_the_week[@attendance.worked_on.wday] %></td>
-                  <td class="center"><%= f.time_select :scheduled_end_time, minute_step: 15, class: "form_control" %></td>
-                  <td class="center"><%= f.check_box :overwork_next_day, id: "overwork_next_day" %></td>
-                  <td class="center"><%= f.text_field :work_details, class: "form_control" %></td>
+                  <td class="center"><%= l(@attendance.worked_on, format: :short) %></td> <!--日付-->
+                  <td class="center"><%= $days_of_the_week[@attendance.worked_on.wday] %></td> <!--曜日-->
+                  <td class="center"><%= f.time_select :scheduled_end_time, minute_step: 15, class: "form_control" %></td> <!--終了予定時間-->
+                  <td class="center"><%= f.check_box :overwork_next_day, id: "overwork_next_day" %></td> <!--翌日-->
+                  <td class="center"><%= f.text_field :overwork_detail, class: "form_control" %></td> <!--業務処理内容-->
                   <td class="center">
-                    <%= f.collection_select :overwork_superior_confirmation, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %>
+                    <%= f.collection_select :overwork_confirmation, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %> <!--指示者確認印-->
                   </td>
                 </tr>
               </tbody>
