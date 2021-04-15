@@ -66,14 +66,19 @@ class AttendancesController < ApplicationController
   def update_overwork_request
     @user = User.find(params[:user_id])
     @attendance =  @user.attendances.find(params[:id])
-    if # params[:業務処理内容].blank? || params[:attendance][:指示者確認印]
+    if params[:attendance][:overwork_detail].blank? && params[:attendance][:overwork_confirmation].present?
+      flash[:danger] = "業務処理内容を入力してください。"
+      redirect_to @user
+    elsif params[:attendance][:overwork_confirmation].blank? && params[:attendance][:overwork_detail].present?
+      flash[:danger] = "上長を選択してください。"
+      redirect_to @user
+    elsif params[:attendance][:overwork_detail].blank? && params[:attendance][:overwork_confirmation].blank?
       flash[:danger] = "未入力の項目があります"
-    else
-      # 残業申請中&&支持者承認印が未だの時="申請中"
-      # 
+      redirect_to @user
+    else @attendance.update_attributes(overwork_params) 
       flash[:success] = "残業を申請しました"
+      redirect_to @user
     end
-    redirect_to @user
   end
 
   private
@@ -89,5 +94,9 @@ class AttendancesController < ApplicationController
         flash[:danger] = "編集権限がありません。"
         redirect_to(root_url)
       end
+    end
+
+    def overwork_params
+      params.require(:attendance).permit(:scheduled_end_time, :overwork_next_day, :overwork_detail, :overwork_confirmation)
     end
 end
