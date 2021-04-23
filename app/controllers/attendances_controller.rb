@@ -56,26 +56,26 @@ class AttendancesController < ApplicationController
   end
   
   # 残業申請
-  def edit_overwork_request
+  def edit_overtime_request
     @user = User.find(params[:user_id])
-    @attendance = Attendance.find(params[:id])
-    @superiors = User.where(superior: true).where.not(id: @user.id)
+    @attendance = Attendance.find(params[:id]) # idの値が一致するレコードを探す
+    @superiors = User.where(superior: true).where.not(id: @user.id) # 上記レコードのuser_idを元にユーザー情報を探す
   end
 
   # 残業申請のupdate
-  def update_overwork_request
+  def update_overtime_request
     @user = User.find(params[:user_id])
     @attendance =  @user.attendances.find(params[:id])
-    if params[:attendance][:overwork_detail].blank? && params[:attendance][:overwork_confirmation].present?
+    if params[:attendance][:overtime_detail].blank? && params[:attendance][:overtime_confirmation].present?
       flash[:danger] = "業務処理内容を入力してください。"
       redirect_to @user
-    elsif params[:attendance][:overwork_confirmation].blank? && params[:attendance][:overwork_detail].present?
+    elsif params[:attendance][:overtime_confirmation].blank? && params[:attendance][:overtime_detail].present?
       flash[:danger] = "上長を選択してください。"
       redirect_to @user
-    elsif params[:attendance][:overwork_detail].blank? && params[:attendance][:overwork_confirmation].blank?
+    elsif params[:attendance][:overtime_detail].blank? && params[:attendance][:overtime_confirmation].blank?
       flash[:danger] = "未入力の項目があります"
       redirect_to @user
-    else @attendance.update_attributes(overwork_params) 
+    else @attendance.update_attributes(overtime_params) 
       flash[:success] = "残業を申請しました"
       redirect_to @user
     end
@@ -96,7 +96,7 @@ class AttendancesController < ApplicationController
       end
     end
 
-    def overwork_params
-      params.require(:attendance).permit(:scheduled_end_time, :overwork_next_day, :overwork_detail, :overwork_confirmation)
+    def overtime_params
+      params.require(:attendance).permit(:scheduled_end_time, :overtime_next_day, :overtime_detail, :overtime_confirmation)
     end
 end

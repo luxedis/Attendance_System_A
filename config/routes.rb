@@ -26,8 +26,8 @@ Rails.application.routes.draw do
     
     resources :attendances, only: :update do # 出勤登録ボタン
       member do # memberにするとurlにidが付けられる
-        get 'edit_overwork_request' # 残業申請モーダル attendance直下のmemberだからurlにattendance_id がつく
-        patch 'update_overwork_request' # 残業申請モーダル。ここで更新
+        get 'edit_overtime_request' # 残業申請モーダル attendance直下のmemberだからurlにattendance_id がつく
+        patch 'update_overtime_request' # 残業申請モーダル。ここで更新
       end
     end
   end

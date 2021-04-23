@@ -1,0 +1,4 @@
+// 呼び出し元 show.html.erbファイルの id="edit-overtime-request" と関連付け
+// render 'edit_overtime_request' で _edit_overtime_request.html.erbパーシャルファイルを読みに行く
+$("#edit-overtime-request").html("<%= escape_javascript(render 'edit_overtime_request') %>");
+$("#edit-overtime-request").modal("show");

@@ -7,7 +7,7 @@
     </div>
     <div class="modal-body">
       <h2 class="modal-title">【残業申請】</h2>
-      <%= form_with(model: @attendance, url: update_overwork_request_user_attendance_path(@user, @attendance), local: true, method: :patch) do |f| %>
+      <%= form_with(model: @attendance, url: update_overtime_request_user_attendance_path(@user, @attendance), local: true, method: :patch) do |f| %>
         <div class="row">
           <div class="col-md-10 col-md-offset-1">
             <table class="table table-striped table-bordered table-condensed table-hover">
@@ -26,10 +26,10 @@
                   <td class="center"><%= l(@attendance.worked_on, format: :short) %></td> <!--日付-->
                   <td class="center"><%= $days_of_the_week[@attendance.worked_on.wday] %></td> <!--曜日-->
                   <td class="center"><%= f.time_select :scheduled_end_time, minute_step: 15, class: "form_control" %></td> <!--終了予定時間-->
-                  <td class="center"><%= f.check_box :overwork_next_day, id: "overwork_next_day" %></td> <!--翌日-->
-                  <td class="center"><%= f.text_field :overwork_detail, class: "form_control" %></td> <!--業務処理内容-->
+                  <td class="center"><%= f.check_box :overtime_next_day, id: "overtime_next_day" %></td> <!--翌日-->
+                  <td class="center"><%= f.text_field :overtime_detail, class: "form_control" %></td> <!--業務処理内容-->
                   <td class="center">
-                    <%= f.collection_select :overwork_confirmation, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %> <!--指示者確認印-->
+                    <%= f.collection_select :overtime_confirmation, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %> <!--指示者確認印-->
                   </td>
                 </tr>
               </tbody>

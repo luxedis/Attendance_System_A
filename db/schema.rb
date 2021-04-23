@@ -18,9 +18,9 @@ ActiveRecord::Schema.define(version: 20210226092204) do
     t.datetime "finished_at"
     t.string "note"
     t.datetime "scheduled_end_time"
-    t.boolean "overwork_next_day"
-    t.string "overwork_detail"
-    t.string "overwork_confirmation"
+    t.boolean "overtime_next_day"
+    t.string "overtime_detail"
+    t.string "overtime_confirmation"
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -66,7 +66,7 @@
     <tbody>
       <% @attendances.each do |day| %> <!-- @attendances= (@first_day..@last_day). -->
         <tr>
-          <td><%= link_to "残業申請", edit_overwork_request_user_attendance_path(@user, day), remote: :true, class: "btn btn-primary" %></td>
+          <td><%= link_to "残業申請", edit_overtime_request_user_attendance_path(@user, day), remote: :true, class: "btn btn-primary" %></td>
           <td><%= l(day.worked_on, format: :short) %></td> <!-- l(day, format: :short -->
           <td class='<%= "wday#{day.worked_on.wday}"%>'><%= $days_of_the_week[day.worked_on.wday] %></td> <!--[day.wday]-->
           <td><%= format_hour(day.started_at) if day.started_at.present? %></td> <!--l(day.started_at, format: :time)-->
@@ -100,26 +100,23 @@
         <td></td>
         <td colspan="2"></td>
         <td colspan="6"></td>
-        <td></td>
-        <td></td>
+        <td clospan="2"><%= format("%.2f", @total_working_times.to_f) %></td>
+        <td colspan="5"></td>
         <td>
-          <!--1ヶ月勤怠所属ちょう承認申請-->
+          <!--1ヶ月勤怠所属長承認申請-->
           <%= "所属長承認　未" %><br>
-          <!--< %= f.submit "申請", class: "btn btn-primary btn-block" %>-->
+            <%= link_to "申請", class: "btn btn-md btn-primary" %>
         </td>
-      </tr>
-      <tr>
-        <td colspan="2"><%= @attendances.count %></td>
-        <td colspan="2"><%= format_basic_info(@user.designated_work_start_time).to_f * @worked_sum %></td>
-        <td colspan="2"><%= format("%.2f", @total_working_times.to_f) %></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
       </tr>
     </tfoot>
   </table>
 </div>
 
 <!--モーダルウィンドウ表示-->
-<div id="edit-overwork-request" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="edit-overtime-request" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<!--
+  <div id="approval-monthly-report" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 一か月分の承認
+  <div id="approval-monthly-edit" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 一か月分編集の承認
+  <div id="approval-overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 
+  <div id="approved-log" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+-->
