@@ -75,7 +75,8 @@ class AttendancesController < ApplicationController
     elsif params[:attendance][:overtime_detail].blank? && params[:attendance][:overtime_confirmation].blank?
       flash[:danger] = "未入力の項目があります"
       redirect_to @user
-    else @attendance.update_attributes(overtime_params) 
+    else @attendance.update_attributes(overtime_params)
+      # debugger
       flash[:success] = "残業を申請しました"
       redirect_to @user
     end

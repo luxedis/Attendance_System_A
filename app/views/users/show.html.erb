@@ -85,10 +85,10 @@
               <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
             <% end %></td>
           <td><%= day.note %></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td><%= format_hour(day.scheduled_end_time) if day.scheduled_end_time.present? %></td>
+          <td><%= format_hour(day.scheduled_end_time) if day.scheduled_end_time.present? %></td>
+          <td><%= overtime_info(day.scheduled_end_time, @user.designated_work_end_time, day.overtime_next_day) if day.scheduled_end_time.present? %></td>
+          <td><%= day.overtime_detail %></td>
           <td></td>
         </tr>
       <% end %>
@@ -116,7 +116,7 @@
 <div id="edit-overtime-request" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 <!--
   <div id="approval-monthly-report" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 一か月分の承認
-  <div id="approval-monthly-edit" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 一か月分編集の承認
-  <div id="approval-overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 
-  <div id="approved-log" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+  <div id="approval-monthly-edit" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 上長が一か月分勤怠編集を承認する
+  <div id="approval-overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 上長が残業申請を承認するモーダル　優先事項
+  <div id="approved-log" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 一か月編集で承認した勤怠ログの表示で、残業とが関係ない
 -->
