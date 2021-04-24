@@ -86,9 +86,9 @@
             <% end %></td>
           <td><%= day.note %></td>
           <td><%= format_hour(day.scheduled_end_time) if day.scheduled_end_time.present? %></td>
-          <td><%= format_hour(day.scheduled_end_time) if day.scheduled_end_time.present? %></td>
-          <td><%= overtime_info(day.scheduled_end_time, @user.designated_work_end_time, day.overtime_next_day) if day.scheduled_end_time.present? %></td>
-          <td><%= day.overtime_detail %></td>
+          <td><%= format_min(day.scheduled_end_time) if day.scheduled_end_time.present? %></td>
+          <td></td>
+          <td></td>
           <td></td>
         </tr>
       <% end %>
