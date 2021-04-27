@@ -6,7 +6,7 @@
       </button>
     </div>
     <div class="modal-body">
-      <%= form_with(model: @user, url: update_overtime_approval_user_attendances_path(@user), local: true, method: :patch) do |f| %>
+      <%= form_with(model: @user, url: update_approval_overtime_user_attendances_path(@user), local: true, method: :patch) do |f| %>
         <% @attendances.each do |id, attendances| %>
           <% user = User.find(id) %>
           <h2 class="modal-title">【<%= user.name %>からの残業申請】</h2>
@@ -41,7 +41,7 @@
                         </td>
                         <td class="center"><%= notice.try(:work_details) %></td>
                         <td class="center">
-                          <%= att.select :overtime_status, ['なし', '申請中', '承認', '否認'], {include_blank: true}, class: "form_control" %>
+                          <%= att.select :attendances_status, ['なし', '申請中', '承認', '否認'], {include_blank: true}, class: "form_control" %>
                         </td>
                         <td class="center"><%= att.check_box :change, class: "change" %></td>
                         <td class="center"><%= link_to "確認", confirm_one_month_user_path(@user, attendance_id: notice.id), class: "btn btn-primary btn-md" %></td>

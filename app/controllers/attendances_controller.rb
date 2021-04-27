@@ -54,7 +54,7 @@ class AttendancesController < ApplicationController
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
     redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
-  
+
   # 残業申請
   def edit_overtime_request
     @user = User.find(params[:user_id])
@@ -82,6 +82,47 @@ class AttendancesController < ApplicationController
     end
   end
 
+  # 上長が残業申請を承認するモーダル
+  def edit_approval_overtime
+    @user = User.find(params[:user_id])
+    @attendances = Attendance.where(attendance_status: "申請中", overtime_superior_confirmation: @user.name).order()
+  end
+
+  # 残業申請お知らせモーダル更新
+  # def update_approval_overtime
+  #   ActiveRecord::Base.transaction do
+  #     o1 = 0
+  #     o2 = 0
+  #     o3 = 0
+  #     approval_overtime params.each do |id, item|
+  #       if item[:indicater_reply].present?
+  #         if (item[:change] == "1") && (item[:indicater_reply] == "なし" || item[:indicater_reply] == "承認" || item[:indicater_reply] == "否認")
+  #         attendance = Attendance.find(id)
+  #         user = User.find(attendance.user_id)
+  #           if item[:indicater_reply] == "なし"
+  #             o1 += 1
+  #             item[:overtime_finished_at] = nil # カラムを作る
+  #             item[:overtime_next_day] = nil # カラムを作る
+  #             item[:overtime_work] = nil # カラムを作る
+  #             item[:indicater_check] = nil # カラムを作る
+  #           elsif item[:indicater_reply] == "承認"
+  #             o2 += 1
+  #             attendance.indicater_check_anser = "残業申請を承認しました"
+  #           elsif item[:indicater_reply] == "否認"
+  #             o3 += 1
+  #           end
+  #           attendance.update_attributes!(item)
+  #         end
+  #       end
+  #     end
+  #     flash[:success] = "残業申請を#{o1}件なし,#{o2}件承認,#{o3}件否認しました。"
+  #     redirect_to user_url(date: params[:date])
+  #   end
+  # rescue ActiveRecord::RecordInvalid
+  #   flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+  #   redirect_to edit_overtime_notice_user_attendance_url(@user, item)
+  # end
+
   private
     # 1ヶ月分の勤怠情報を扱う
     def attendances_params
@@ -100,4 +141,8 @@ class AttendancesController < ApplicationController
     def overtime_params
       params.require(:attendance).permit(:scheduled_end_time, :overtime_next_day, :overtime_detail, :overtime_confirmation)
     end
+
+    # def approval_overtime_params
+    #   params.require(:user).permit(attendances: [:overtime_status, :change])[:attendances]
+    # end
 end

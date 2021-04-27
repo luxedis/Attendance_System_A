@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info]
-  before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info] # overtime_request
+  before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info] # overtime_request
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info]
   before_action :admin_or_correct_user, only: :show
@@ -25,6 +25,10 @@ require 'csv'
         send_data render_to_string, filename: "勤怠一覧表.csv", type: :csv
       end
     end
+    # @approval_manager_notice = Attendance.where('#': "申請中", overtime)
+    # @attendance_change_notice = Attendance.where('#': "申請中", overtime)
+    # @overtime_notice = Attendance.where(overtime_status: "申請中", overtime)
+
     # @first_day = Date.current.beginning_of_month
     # @last_day = @first_day.end_of_month
   end
