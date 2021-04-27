@@ -14,7 +14,7 @@ class AttendancesController < ApplicationController
       if @attendance.update_attributes(started_at: Time.current.change(sec: 0))
         flash[:info] = "おはようございます!"
       else
-        flash[:danger] = UPDATE_ERROR_MSG # "勤怠登録に失敗しました。やり直してください。""
+        flash[:danger] = UPDATE_ERROR_MSG # "勤怠登録に失敗しました。やり直してください。"
       end
     elsif @attendance.finished_at.nil?
       if @attendance.update_attributes(finished_at: Time.current.change(sec: 0))
@@ -65,17 +65,19 @@ class AttendancesController < ApplicationController
   # 残業申請のupdate
   def update_overtime_request
     @user = User.find(params[:user_id])
-    @attendance =  @user.attendances.find(params[:id])
+    @attendance =  Attendance.find(params[:id]) # attendanceのデータにはuser_idが入っている。userのattendanceだから。
     if params[:attendance][:overtime_detail].blank? && params[:attendance][:overtime_confirmation].present?
       flash[:danger] = "業務処理内容を入力してください。"
       redirect_to @user
     elsif params[:attendance][:overtime_confirmation].blank? && params[:attendance][:overtime_detail].present?
       flash[:danger] = "上長を選択してください。"
       redirect_to @user
-    elsif params[:attendance][:overtime_detail].blank? && params[:attendance][:overtime_confirmation].blank?
+    elsif params[:attendance][:overtime_detail].blank? && params[:attendance][:overtime_confirmation].blank? # elsifは条件式だから、if文だから、同行に書いてOK
       flash[:danger] = "未入力の項目があります"
       redirect_to @user
-    else @attendance.update_attributes(overtime_params)
+    else
+      params[:attendance][:overtime_status] = "申請中"
+      @attendance.update_attributes(overtime_params) # ここで選択した上長のデータが入っている/private内のovertime_paramsをここで更新
       # debugger
       flash[:success] = "残業を申請しました"
       redirect_to @user
@@ -85,7 +87,8 @@ class AttendancesController < ApplicationController
   # 上長が残業申請を承認するモーダル
   def edit_approval_overtime
     @user = User.find(params[:user_id])
-    @attendances = Attendance.where(attendance_status: "申請中", overtime_superior_confirmation: @user.name).order()
+    @attendances = Attendance.where(overtime_confirmation: @user.name, overtime_status: "申請中").order(:user_id).group_by(&:user_id)
+    # ⬆️自分宛(上長を入れいてるカラムだから、上長しかありえない)に申請されいている申請中のattendanceレコード/.order＝昇順
   end
 
   # 残業申請お知らせモーダル更新
@@ -95,10 +98,8 @@ class AttendancesController < ApplicationController
   #     o2 = 0
   #     o3 = 0
   #     approval_overtime params.each do |id, item|
-  #       if item[:indicater_reply].present?
-  #         if (item[:change] == "1") && (item[:indicater_reply] == "なし" || item[:indicater_reply] == "承認" || item[:indicater_reply] == "否認")
-  #         attendance = Attendance.find(id)
-  #         user = User.find(attendance.user_id)
+#         if (item[:change] == "1") && #申請中だと更新しない
+#           attendance = Attendance.find(id)
   #           if item[:indicater_reply] == "なし"
   #             o1 += 1
   #             item[:overtime_finished_at] = nil # カラムを作る
@@ -114,6 +115,9 @@ class AttendancesController < ApplicationController
   #           attendance.update_attributes!(item)
   #         end
   #       end
+  #     end
+  #     if o1,02,03 が全て0なら
+  #       flash[:success] = "更新はありませんでした。"
   #     end
   #     flash[:success] = "残業申請を#{o1}件なし,#{o2}件承認,#{o3}件否認しました。"
   #     redirect_to user_url(date: params[:date])
@@ -139,7 +143,7 @@ class AttendancesController < ApplicationController
     end
 
     def overtime_params
-      params.require(:attendance).permit(:scheduled_end_time, :overtime_next_day, :overtime_detail, :overtime_confirmation)
+      params.require(:attendance).permit(:scheduled_end_time, :overtime_next_day, :overtime_detail, :overtime_confirmation, :overtime_status)
     end
 
     # def approval_overtime_params

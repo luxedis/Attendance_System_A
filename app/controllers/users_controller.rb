@@ -28,9 +28,7 @@ require 'csv'
     # @approval_manager_notice = Attendance.where('#': "申請中", overtime)
     # @attendance_change_notice = Attendance.where('#': "申請中", overtime)
     # @overtime_notice = Attendance.where(overtime_status: "申請中", overtime)
-
-    # @first_day = Date.current.beginning_of_month
-    # @last_day = @first_day.end_of_month
+    @overtime_notice = Attendance.where(overtime_confirmation: @user.name, overtime_status: "申請中").size # 件数の表示のみ
   end
   
   def new

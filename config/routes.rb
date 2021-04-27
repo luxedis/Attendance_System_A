@@ -29,6 +29,10 @@ Rails.application.routes.draw do
         get 'edit_overtime_request' # 残業申請モーダル attendance直下のmemberだからurlにattendance_id がつく
         patch 'update_overtime_request' # 残業申請モーダル。ここで更新
       end
+      collection do
+        get 'edit_approval_overtime' # collection付けるとurlにidが付かなくてOKになる
+        patch 'update_approval_overtime'
+      end
     end
   end
   

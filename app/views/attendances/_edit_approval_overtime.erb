@@ -26,25 +26,25 @@
                     <th class="center">勤怠を確認する</th>
                   </tr>
                 </thead>
-                <% attendances.each do |notice| %>
-                  <%= f.fields_for "attendances[]", notice do |att| %>
+                <% attendances.each do |day| %> <!--1日分のレコード-->
+                  <%= f.fields_for "attendances[]", day do |d| %> <!--form_withの|f|と同じ意味のブロック変数/44行目で使っている-->
                     <tbody>
                       <tr>
-                        <td class="center"><%= l(notice.worked_on, format: :short) %></td>
-                        <td class="center"><%= $days_of_the_week[notice.worked_on.wday] %></td>
-                        <td class="center"><%= l(notice.scheduled_end_time, format: :time) %></td>
+                        <td class="center"><%= l(day.worked_on, format: :short) %></td>
+                        <td class="center"><%= $days_of_the_week[day.worked_on.wday] %></td>
+                        <td class="center"><%= l(day.scheduled_end_time, format: :time) %></td>
                         <td class="center"><%= format_basic_info(user.designated_work_end_time) %></td>
                         <td class="center">
-                          <% if notice.scheduled_end_time.present? %>
-                            <%= overtime_info(notice.scheduled_end_time, user.designated_work_end_time, notice.overtime_next_day) %>
+                          <% if day.scheduled_end_time.present? %>
+                            <%= overtime_info(day.scheduled_end_time, user.designated_work_end_time, day.overtime_next_day) %> <!--helperで時間の定義,-->
                           <% end %>
                         </td>
-                        <td class="center"><%= notice.try(:work_details) %></td>
+                        <td class="center"><%= day.overtime_detail %></td>
                         <td class="center">
-                          <%= att.select :attendances_status, ['なし', '申請中', '承認', '否認'], {include_blank: true}, class: "form_control" %>
-                        </td>
-                        <td class="center"><%= att.check_box :change, class: "change" %></td>
-                        <td class="center"><%= link_to "確認", confirm_one_month_user_path(@user, attendance_id: notice.id), class: "btn btn-primary btn-md" %></td>
+                          <%= d.select :overtime_status, ['なし', '申請中', '承認', '否認'], {include_blank: true}, class: "form_control" %> <!--form_withの|f|と同じ意味のブロック変数/30行目で定義している-->
+                        </td> <!--                                                         ⬆️ d.selectの中で,ブランクを有効にする-->
+                        <td class="center"><%= d.check_box :change, class: "change" %></td> <!--残業申請/上長承認ﾓｰﾀﾞﾙの"変更"のcheckbox-->
+                        <td class="center"><%= link_to "確認", '#', class: "btn btn-primary btn-md" %></td>
                       </tr>
                     </tbody>
                   <% end %>

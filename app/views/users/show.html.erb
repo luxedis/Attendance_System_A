@@ -27,36 +27,36 @@
 </div>
 
 <!--申請のお知らせ-->
-<!-- <div class="btn-users-show">
-  <% if current_user.superior? %>
+  <% if @user.superior? %>
     <div>
+    <!--
       <% if @approval_manager_notice %> # users_controllerで定義する
         <span style="color: red">
           <%= link_to "【所属長承認申請のお知らせ】",'#', remote: true, class: "approval_message" %>
           <b stlye="margin-bottom: 1px; border: 3px solid red;"><%= @approval_monthly_report %>件の通知があります</b>
         </span>
-      <% else %>
+      <% else %> -->
         【所属長承認申請のお知らせ】
-      <% end %><br>
-      <% if @attendance_change_notice %>
+      <!--<% end %> --><br>
+      <!--<% if @attendance_change_notice %>
         <span style="color: red">
           <%= link_to "【勤怠変更申請のお知らせ】",'#', remote: true, class: "approval_message" %>
           <b stlye="margin-bottom: 1px; border: 3px solid red;"><%= @approval_monthly_report %>件の通知があります</b>
         </span>
-      <% else %>
+      <% else %> -->
         【勤怠変更申請のお知らせ】
-      <% end %><br>
-      <% if @overtime_notice %>
+      <!-- <% end %> --><br>
+      <% if @overtime_notice > 0 %>
         <span style="color: red">
-          <%= link_to "【残業申請のお知らせ】",'#', remote: true, class: "approval_message" %>
-          <b stlye="margin-bottom: 1px; border: 3px solid red;"><%= @approval_monthly_report %>件の通知があります</b>
+          <%= link_to "【残業申請のお知らせ】", edit_approval_overtime_user_attendances_path(@user), remote: true, class: "approval_message" %>
+          <b stlye="margin-bottom: 1px; border: 3px solid red;"><%= @overtime_notice %>件の通知があります</b>
         </span>
       <% else %>
         【残業申請のお知らせ】
       <% end %>
     </div>
   <% end %>
-</div> -->
+
 <!-- 勤怠テーブル情報区分    -->
 <div>
   <table class="table table-bordered table-condensed table-hover" id="table-attendances">
@@ -144,10 +144,8 @@
 </div>
 
 <!--モーダルウィンドウ表示-->
-<div id="edit-overtime-request" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
-
+<div id="edit-overtime-request" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> <!--残業申請-->
+<div id="approval-overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> <!--# 上長が残業申請を承認するモーダル -->
   <!-- <div id="approval-monthly-report" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 一か月分の承認 --> 
   <!-- <div id="approval-monthly-edit" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 上長が一か月分勤怠編集を承認する--> 
-<div id="approval-overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> <!--# 上長が残業申請を承認するモーダル　優先事項 -->
-  <!-- <div id="approved-log" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 一か月編集で承認した勤怠ログの表示で、残業とが関係ない --> 
--->
+  <!-- <div id="approved-log" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 一か月編集で承認した勤怠ログの表示で、残業とが関係ない -->
