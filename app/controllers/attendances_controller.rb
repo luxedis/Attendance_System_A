@@ -88,44 +88,44 @@ class AttendancesController < ApplicationController
   def edit_approval_overtime
     @user = User.find(params[:user_id])
     @attendances = Attendance.where(overtime_confirmation: @user.name, overtime_status: "申請中").order(:user_id).group_by(&:user_id)
-    # ⬆️自分宛(上長を入れいてるカラムだから、上長しかありえない)に申請されいている申請中のattendanceレコード/.order＝昇順
+    # ⬆️自分宛(上長を入れいてるカラムだから、上長しかありえない)に申請されいている申請中のattendanceレコード/.order＝昇順/.group_by集合の要素の数だけ繰り返し処理してチェックする
   end
 
-  # 残業申請お知らせモーダル更新
-  # def update_approval_overtime
-  #   ActiveRecord::Base.transaction do
-  #     o1 = 0
-  #     o2 = 0
-  #     o3 = 0
-  #     approval_overtime params.each do |id, item|
-#         if (item[:change] == "1") && #申請中だと更新しない
-#           attendance = Attendance.find(id)
-  #           if item[:indicater_reply] == "なし"
-  #             o1 += 1
-  #             item[:overtime_finished_at] = nil # カラムを作る
-  #             item[:overtime_next_day] = nil # カラムを作る
-  #             item[:overtime_work] = nil # カラムを作る
-  #             item[:indicater_check] = nil # カラムを作る
-  #           elsif item[:indicater_reply] == "承認"
-  #             o2 += 1
-  #             attendance.indicater_check_anser = "残業申請を承認しました"
-  #           elsif item[:indicater_reply] == "否認"
-  #             o3 += 1
-  #           end
-  #           attendance.update_attributes!(item)
-  #         end
-  #       end
-  #     end
-  #     if o1,02,03 が全て0なら
-  #       flash[:success] = "更新はありませんでした。"
-  #     end
-  #     flash[:success] = "残業申請を#{o1}件なし,#{o2}件承認,#{o3}件否認しました。"
-  #     redirect_to user_url(date: params[:date])
-  #   end
-  # rescue ActiveRecord::RecordInvalid
-  #   flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
-  #   redirect_to edit_overtime_notice_user_attendance_url(@user, item)
-  # end
+  # "残業申請のお知らせ"モーダル更新
+  def update_approval_overtime
+    ActiveRecord::Base.transaction do
+      o1 = 0
+      o2 = 0
+      o3 = 0
+      approval_overtime params.each do |id, item|
+        if (item[:change] == "1") && (item[:overtime_status] == "申請中") #申請中だと更新しない
+          attendance = Attendance.find(id)
+            if item[:overtime_status] == "なし"
+              o1 += 1
+              item[:scheduled_end_time] = nil
+              item[:overtime_next_day] = nil
+              item[:overtime_detail] = nil
+              item[:overtime_confirmation] = nil
+            elsif item[:overtime_status] == "承認"
+              o2 += 1
+              attendance.indicater_check_anser = "残業申請を承認しました"
+            elsif item[:overtime_status] == "否認"
+              o3 += 1
+            end
+            attendance.update_attributes!(item)
+          end
+        end
+      end
+      if o1,o2,o3 が全て0なら
+        flash[:success] = "更新はありませんでした。"
+      end
+      flash[:success] = "残業申請#{o1}件,#{o2}件承認,#{o3}件否認しました。"
+      redirect_to user_url(date: params[:date])
+    end
+  rescue ActiveRecord::RecordInvalid
+    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+    redirect_to edit_overtime_notice_user_attendance_url(@user, item)
+  end
 
   private
     # 1ヶ月分の勤怠情報を扱う
