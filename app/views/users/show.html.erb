@@ -118,9 +118,9 @@
           <td><%= day.note %></td> <!--備考-->
           <td><%= format_hour(day.scheduled_end_time) if day.scheduled_end_time.present? %></td>
           <td><%= format_min(day.scheduled_end_time) if day.scheduled_end_time.present? %></td> <!--終了予定時間-->
-          <td></td>
-          <td></td>
-          <td></td>
+          <td></td> <!--時間外時間helperで計算式-->
+          <td><%= day.overtime_detail %></td>
+          <td><%= day.overtime_status %></td>
         </tr>
       <% end %>
     </tbody>

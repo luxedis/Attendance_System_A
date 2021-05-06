@@ -128,7 +128,7 @@ require 'csv'
   # beforeフィルター
   def admin_or_correct_user
     # @user = User.find(params[:id]) if @user.blank? #id1のユーザーを探してそのレコードを@userに入れてあげるbefore_actionでset_use してるから
-    unless current_user?(@user) || current_user.admin? #current_userが@userじゃない、current_userがadminだから入らないunless文はどちらかがtuireだと入らない 
+    unless current_user?(@user) || current_user.admin? #current_userが@userじゃない、current_userがadminだから入らないunless文はどちらかがtuireだと入らない
       flash[:danger] = "編集権限がありません。"
       redirect_to(root_url)
     end

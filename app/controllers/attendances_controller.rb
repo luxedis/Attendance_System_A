@@ -93,38 +93,35 @@ class AttendancesController < ApplicationController
 
   # "残業申請のお知らせ"モーダル更新
   def update_approval_overtime
+    @user = User.find(params[:user_id])
     ActiveRecord::Base.transaction do
-      o1 = 0
-      o2 = 0
-      o3 = 0
-      approval_overtime params.each do |id, item|
-        if (item[:change] == "1") && (item[:overtime_status] == "申請中") #申請中だと更新しない
+      n1 = 0
+      n2 = 0
+      n3 = 0
+      approval_overtime_params.each do |id, item|
+        if (item[:change] == "1") # なし,承認,否認は== 1と定義、申請中だと更新せず、1なら更新する。以下処理
           attendance = Attendance.find(id)
-            if item[:overtime_status] == "なし"
-              o1 += 1
-              item[:scheduled_end_time] = nil
-              item[:overtime_next_day] = nil
-              item[:overtime_detail] = nil
-              item[:overtime_confirmation] = nil
-            elsif item[:overtime_status] == "承認"
-              o2 += 1
-              attendance.indicater_check_anser = "残業申請を承認しました"
-            elsif item[:overtime_status] == "否認"
-              o3 += 1
-            end
-            attendance.update_attributes!(item)
+          if item[:overtime_status] == "なし" # 残業申請を無かったことにする'なし'
+            n1 += 1 # 終了予定時間,翌日,業務処理内容,モーダル内の上長の名前
+            item[:scheduled_end_time] = nil
+            item[:overtime_next_day] = nil
+            item[:overtime_detail] = nil
+            item[:overtime_confirmation] = nil
+          elsif item[:overtime_status] == "承認"
+            n2 += 1
+          elsif item[:overtime_status] == "否認"
+            n3 += 1
           end
+          attendance.update_attributes!(item) # 例外処理を返す為の'!'
         end
+        # o1,o2,o3が全て0なら更新しない        
       end
-      if o1,o2,o3 が全て0なら
-        flash[:success] = "更新はありませんでした。"
-      end
-      flash[:success] = "残業申請#{o1}件,#{o2}件承認,#{o3}件否認しました。"
-      redirect_to user_url(date: params[:date])
+      flash[:success] = "残業申請　なし#{n1}件、承認#{n2}件、否認#{n3}件"
+      redirect_to user_url(@user) and return # リダイレクトしたらここで終わりなさい、の意味(and return)
     end
   rescue ActiveRecord::RecordInvalid
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
-    redirect_to edit_overtime_notice_user_attendance_url(@user, item)
+    redirect_to user_url(@user) and return
   end
 
   private
@@ -146,7 +143,7 @@ class AttendancesController < ApplicationController
       params.require(:attendance).permit(:scheduled_end_time, :overtime_next_day, :overtime_detail, :overtime_confirmation, :overtime_status)
     end
 
-    # def approval_overtime_params
-    #   params.require(:user).permit(attendances: [:overtime_status, :change])[:attendances]
-    # end
+    def approval_overtime_params
+      params.require(:user).permit(attendances: [:scheduled_end_time, :overtime_next_day, :overtime_detail, :overtime_confirmation, :overtime_status, :change])[:attendances]
+    end
 end
