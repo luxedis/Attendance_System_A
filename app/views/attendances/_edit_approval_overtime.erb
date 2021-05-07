@@ -34,7 +34,7 @@
                       <td><%= format_basic_info(user.designated_work_end_time) %></td>
                       <td>
                         <% if day.scheduled_end_time.present? %>
-                          <%= overtime_info(day.scheduled_end_time, user.designated_work_end_time, day.overtime_next_day) %> <!--helperで時間の定義,-->
+                          <%= overtime_info(day.scheduled_end_time, user.designated_work_end_time, day.overtime_next_day) %> <!--時間外時間,attendances_helperで時間の定義,-->
                         <% end %>
                       </td>
                       <td><%= day.overtime_detail %></td>
