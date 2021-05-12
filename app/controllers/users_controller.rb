@@ -106,6 +106,14 @@ require 'csv'
   #   @users = User.search(params[:search])
   # end
   
+  # 各お知らせモーダル内の勤怠確認ボタン
+  def confirm_one_month
+    @user = User.find(params[:id])
+    @first_day = params[:date].to_date.beginning_of_month
+    @last_day = @first_day.end_of_month
+    @attendances = @user.attendances.where(worked_on: @first_day..@last_day).order(:worked_on)
+  end
+
   private
   
   def user_params

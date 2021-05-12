@@ -118,19 +118,26 @@
           <td><%= day.note %></td> <!--備考-->
           <td><%= format_hour(day.scheduled_end_time) if day.scheduled_end_time.present? %></td>
           <td><%= format_min(day.scheduled_end_time) if day.scheduled_end_time.present? %></td> <!--終了予定時間-->
-          <td><%= overtime_info(day.scheduled_end_time, @user.designated_work_end_time, day.overtime_next_day) if day.scheduled_end_time.present? %></td> <!--時間外時間,attendances_helperで計算式-->
-          <td><%= day.overtime_detail %></td>
+          <!-- <td><%= overtime_info(day.scheduled_end_time, @user.designated_work_end_time, day.overtime_next_day) if day.scheduled_end_time.present? %></td>    --時間外時間,attendances_helperで計算式-->
           <td>
-            <% if day.overtime_status == "申請中" %>
-              <div><%= day.superior %>に残業申請中</div>
-            <% elsif day.overtime_status == "承認" %>
-              <div>残業承認済</div>
-            <% elsif day.overtime_status == "否認" %>
-              <div>残業申請否認</div>
-            <% else %>
-              <%= day.overtime_status %>
+            <% if day.scheduled_end_time.present? %>
+              <% if day.started_at.present? && (day.started_at > @user.designated_work_end_time) %>
+                <%= overtime_info(day.scheduled_end_time, day.started_at, day.overtime_next_day) %>
+              <% else %>
+                <%= overtime_info(day.scheduled_end_time, @user.designated_work_end_time, day.overtime_next_day) %> <!--申請ﾓｰﾀﾞﾙの時間外時間,attendances_helperで時間の定義,-->
+              <% end %>
             <% end %>
           </td>
+          <td><%= day.overtime_detail %></td>
+          <% if day.overtime_status == "申請中" %>
+            <td><%= day.overtime_confirmation %>に残業申請中</td>
+          <% elsif day.overtime_status == "承認" %>
+            <td>残業承認済</td>
+          <% elsif day.overtime_status == "否認" %>
+            <td>残業申請否認</td>
+          <% else %>
+            <td><%= day.overtime_status %></td>
+          <% end %>
         </tr>
       <% end %>
     </tbody>

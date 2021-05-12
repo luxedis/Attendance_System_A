@@ -34,7 +34,11 @@
                       <td><%= format_basic_info(user.designated_work_end_time) %></td>
                       <td>
                         <% if day.scheduled_end_time.present? %>
-                          <%= overtime_info(day.scheduled_end_time, user.designated_work_end_time, day.overtime_next_day) %> <!--時間外時間,attendances_helperで時間の定義,-->
+                          <!--<% if day.started_at.present? && (day.started_at > user.designated_work_end_time) %>
+                            <%= overtime_info(day.scheduled_end_time, day.started_at, day.overtime_next_day) %>
+                          <% else %> -->
+                            <%= overtime_info(day.scheduled_end_time, user.designated_work_end_time, day.overtime_next_day) %>    <!--申請ﾓｰﾀﾞﾙの時間外時間,attendances_helperで時間の定義,-->
+                          <!--<% end %> -->
                         <% end %>
                       </td>
                       <td><%= day.overtime_detail %></td>
@@ -42,8 +46,8 @@
                         <%= d.select :overtime_status, ['なし', '申請中', '承認', '否認'], {include_blank: true}, class: "form_control" %> <!--form_withの|f|と同じ意味のブロック変数/30行目で定義している-->
                       </td> <!--                                                         ⬆️ d.selectの中で,ブランクを有効にする-->
                       <td><%= d.check_box :change, class: "change" %></td> <!--残業申請/上長承認ﾓｰﾀﾞﾙの"変更"のcheckbox-->
-                      <td><%= link_to "確認", '#', class: "btn btn-primary btn-md" %></td>
-                    </tr>
+                      <td><%= link_to "確認", confirm_one_month_user_path(user, date: day.worked_on), method: :get, class: "btn btn-primary btn-md" %></td> <!--11行目で定義しているuserを使う-->
+                    </tr> <!--users_controllerのparams[:date]を渡してあげる為、date:としてからday.を使ってworked_onを渡してあげる-->
                   </tbody>
                 <% end %>
               <% end %>
