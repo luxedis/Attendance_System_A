@@ -15,6 +15,11 @@ module AttendancesHelper
     format("%.2f", (((finish - start) / 60) / 60.0))
   end
   
+  # 時間と分をそれぞれ分けてメソッドを定義する
+  def format_hour(time)
+    format("%02d", time.hour)
+  end
+
   def format_min(time)
     format("%02d", (time.min * 15) / 15)
   end

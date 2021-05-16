@@ -14,7 +14,7 @@ class AttendancesController < ApplicationController
       if @attendance.update_attributes(started_at: Time.current.change(sec: 0))
         flash[:info] = "おはようございます!"
       else
-        flash[:danger] = UPDATE_ERROR_MSG # "勤怠登録に失敗しました。やり直してください。""
+        flash[:danger] = UPDATE_ERROR_MSG # "勤怠登録に失敗しました。やり直してください。"
       end
     elsif @attendance.finished_at.nil?
       if @attendance.update_attributes(finished_at: Time.current.change(sec: 0))
@@ -54,7 +54,76 @@ class AttendancesController < ApplicationController
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
     redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
-  
+
+  # 残業申請
+  def edit_overtime_request
+    @user = User.find(params[:user_id])
+    @attendance = Attendance.find(params[:id]) # idの値が一致するレコードを探す
+    @superiors = User.where(superior: true).where.not(id: @user.id) # 上記レコードのuser_idを元にユーザー情報を探す
+  end
+
+  # 残業申請のupdate
+  def update_overtime_request
+    @user = User.find(params[:user_id])
+    @attendance =  Attendance.find(params[:id]) # attendanceのデータにはuser_idが入っている。userのattendanceだから。
+    if params[:attendance][:overtime_detail].blank? && params[:attendance][:overtime_confirmation].present?
+      flash[:danger] = "業務処理内容を入力してください。"
+      redirect_to @user
+    elsif params[:attendance][:overtime_confirmation].blank? && params[:attendance][:overtime_detail].present?
+      flash[:danger] = "上長を選択してください。"
+      redirect_to @user
+    elsif params[:attendance][:overtime_detail].blank? && params[:attendance][:overtime_confirmation].blank? # elsifは条件式だから、if文だから、同行に書いてOK
+      flash[:danger] = "未入力の項目があります"
+      redirect_to @user
+    else
+      params[:attendance][:overtime_status] = "申請中"
+      @attendance.update_attributes(overtime_params) # ここで選択した上長のデータが入っている/private内のovertime_paramsをここで更新
+      # debugger
+      flash[:success] = "残業を申請しました"
+      redirect_to @user
+    end
+  end
+
+  # 上長が残業申請を承認するモーダル
+  def edit_approval_overtime
+    @user = User.find(params[:user_id])
+    @attendances = Attendance.where(overtime_confirmation: @user.name, overtime_status: "申請中").order(:user_id).group_by(&:user_id)
+    # ⬆️自分宛(上長を入れいてるカラムだから、上長しかありえない)に申請されいている申請中のattendanceレコード/.order＝昇順/.group_by集合の要素の数だけ繰り返し処理してチェックする
+  end
+
+  # "残業申請のお知らせ"モーダル更新
+  def update_approval_overtime
+    @user = User.find(params[:user_id])
+    ActiveRecord::Base.transaction do
+      n1 = 0
+      n2 = 0
+      n3 = 0
+      approval_overtime_params.each do |id, item|
+        if (item[:change] == "1") # なし,承認,否認は== 1と定義、申請中だと更新せず、1なら更新する。以下処理
+          attendance = Attendance.find(id)
+          if item[:overtime_status] == "なし" # 残業申請を無かったことにする'なし'
+            n1 += 1 # 終了予定時間,翌日,業務処理内容,モーダル内の上長の名前
+            item[:scheduled_end_time] = nil
+            item[:overtime_next_day] = nil
+            item[:overtime_detail] = nil
+            item[:overtime_confirmation] = nil
+          elsif item[:overtime_status] == "承認"
+            n2 += 1
+          elsif item[:overtime_status] == "否認"
+            n3 += 1
+          end
+          attendance.update_attributes!(item) # 例外処理を返す為の'!'
+        end
+        # o1,o2,o3が全て0なら更新しない        
+      end
+      flash[:success] = "残業申請　なし#{n1}件、承認#{n2}件、否認#{n3}件"
+      redirect_to user_url(@user) and return # リダイレクトしたらここで終わりなさい、の意味(and return)
+    end
+  rescue ActiveRecord::RecordInvalid
+    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+    redirect_to user_url(@user) and return
+  end
+
   private
     # 1ヶ月分の勤怠情報を扱う
     def attendances_params
@@ -68,5 +137,13 @@ class AttendancesController < ApplicationController
         flash[:danger] = "編集権限がありません。"
         redirect_to(root_url)
       end
+    end
+
+    def overtime_params
+      params.require(:attendance).permit(:scheduled_end_time, :overtime_next_day, :overtime_detail, :overtime_confirmation, :overtime_status)
+    end
+
+    def approval_overtime_params
+      params.require(:user).permit(attendances: [:scheduled_end_time, :overtime_next_day, :overtime_detail, :overtime_confirmation, :overtime_status, :change])[:attendances]
     end
 end

@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info]
-  before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info] # overtime_request
+  before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info] # overtime_request
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info]
   before_action :admin_or_correct_user, only: :show
@@ -25,8 +25,10 @@ require 'csv'
         send_data render_to_string, filename: "勤怠一覧表.csv", type: :csv
       end
     end
-    # @first_day = Date.current.beginning_of_month
-    # @last_day = @first_day.end_of_month
+    # @approval_manager_notice = Attendance.where('#': "申請中", overtime)
+    # @attendance_change_notice = Attendance.where('#': "申請中", overtime)
+    # @overtime_notice = Attendance.where(overtime_status: "申請中", overtime)
+    @overtime_notice = Attendance.where(overtime_confirmation: @user.name, overtime_status: "申請中").size # 件数の表示のみ
   end
   
   def new
@@ -87,7 +89,6 @@ require 'csv'
     redirect_to users_url
   end
 
-  
   # 勤怠ログ
   def attendance_log
   end
@@ -105,6 +106,14 @@ require 'csv'
   #   @users = User.search(params[:search])
   # end
   
+  # 各お知らせモーダル内の勤怠確認ボタン
+  def confirm_one_month
+    @user = User.find(params[:id])
+    @first_day = params[:date].to_date.beginning_of_month
+    @last_day = @first_day.end_of_month
+    @attendances = @user.attendances.where(worked_on: @first_day..@last_day).order(:worked_on)
+  end
+
   private
   
   def user_params
@@ -127,7 +136,7 @@ require 'csv'
   # beforeフィルター
   def admin_or_correct_user
     # @user = User.find(params[:id]) if @user.blank? #id1のユーザーを探してそのレコードを@userに入れてあげるbefore_actionでset_use してるから
-    unless current_user?(@user) || current_user.admin? #current_userが@userじゃない、current_userがadminだから入らないunless文はどちらかがtuireだと入らない 
+    unless current_user?(@user) || current_user.admin? #current_userが@userじゃない、current_userがadminだから入らないunless文はどちらかがtuireだと入らない
       flash[:danger] = "編集権限がありません。"
       redirect_to(root_url)
     end
