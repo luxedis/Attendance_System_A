@@ -98,11 +98,15 @@
     <tfoot>
       <!--rowspan:縦結合, colspan:横結合-->
       <tr>
-        <td colspan="2">累計日数</td>
-        <td colspan="6">総合勤務時間</td>
-        <td colspan="4">累計在社時間<%= format("%.2f", @total_working_times.to_f) %></td>
-        <td colspan="5"></td>
         <td></td>
+        <td colspan="2"></td>
+        <td colspan="6"></td>
+        <td><%= format("%.2f", @total_working_times.to_f) %></td>
+        <td colspan="5"></td>
+        <td>
+          <%= "所属長承認　未" %>
+          <%= link_to "申請", class: "btn btn-md btn-primary" %>
+        </td>
       </tr>
     </tfoot>
   </table>
