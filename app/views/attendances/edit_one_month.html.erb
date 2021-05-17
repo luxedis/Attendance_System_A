@@ -36,7 +36,7 @@
                 <% end %>
               </td>
               <td><%= attendance.text_field :note, class: "form-control" %></td>
-              <td><%= attendance.collection_select :overtime_confirmation, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %></td>
+              <td><%= attendance.collection_select :edit_authorizer, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %></td>
             </tr> <!-- overtime_confirmationは残業申請のもので,⬆️勤怠編集は新たにカラムが必要になる(例:edit_authorizer編集承認者)-->
           <% end %>
         <% end %>

@@ -17,12 +17,13 @@ ActiveRecord::Schema.define(version: 20210226092204) do
     t.datetime "started_at"
     t.datetime "finished_at"
     t.string "note"
-    t.datetime "scheduled_end_time" # 終了予定時間
+    t.datetime "scheduled_end_time"
     t.boolean "overtime_next_day"
     t.string "overtime_detail"
     t.string "overtime_confirmation"
     t.string "overtime_status"
     t.boolean "change"
+    t.string "edit_authorizer"
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -44,8 +45,8 @@ ActiveRecord::Schema.define(version: 20210226092204) do
     t.integer "employee_number"
     t.string "uid"
     t.time "basic_work_time", default: "2000-01-01 23:00:00"
-    t.time "designated_work_start_time", default: "2000-01-01 00:00:00" # 指定勤務開始時間
-    t.time "designated_work_end_time", default: "2000-01-01 09:00:00" # 指定勤務終了時間
+    t.time "designated_work_start_time", default: "2000-01-01 00:00:00"
+    t.time "designated_work_end_time", default: "2000-01-01 09:00:00"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "admin", default: false
