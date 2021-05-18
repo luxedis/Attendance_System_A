@@ -125,6 +125,16 @@ class AttendancesController < ApplicationController
     redirect_to user_url(@user) and return
   end
 
+  # 一か月分の変更申請モーダル表示
+  def approval_monthly_edit
+    @user = User.find(params[:user_id])
+    @attendances = Attendance.where(edit_authorizer: @user.name, overtime_status: "申請中").order(:user_id).group_by(&:user_id) # overtime_statusに変わるカラムを追加する。
+  end
+
+  # 勤怠変更の承認モーダル更新
+  def update_approval_monthly_edit
+  end
+
   private
     # 1ヶ月分の勤怠情報を扱う
     def attendances_params

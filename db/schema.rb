@@ -23,6 +23,12 @@ ActiveRecord::Schema.define(version: 20210226092204) do
     t.string "overtime_confirmation"
     t.string "overtime_status"
     t.boolean "change"
+    t.datetime "before_started_at"
+    t.datetime "before_finished_at"
+    t.datetime "edit_started_at"
+    t.datetime "edit_finished_at"
+    t.boolean "before_next_day"
+    t.boolean "edit_next_day"
     t.string "edit_authorizer"
     t.integer "user_id"
     t.datetime "created_at", null: false
