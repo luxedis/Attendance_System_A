@@ -128,11 +128,40 @@ class AttendancesController < ApplicationController
   # 一か月分の変更申請モーダル表示
   def approval_monthly_edit
     @user = User.find(params[:user_id])
-    @attendances = Attendance.where(edit_authorizer: @user.name, overtime_status: "申請中").order(:user_id).group_by(&:user_id) # overtime_statusに変わるカラムを追加する。
+    @attendances = Attendance.where(edit_authorizer: @user.name, edit_status: "申請中").order(:user_id).group_by(&:user_id)
   end
 
   # 勤怠変更の承認モーダル更新
   def update_approval_monthly_edit
+    @user = User.find(params[:user_id])
+    ActiveRecord::Base.transaction do
+      n1 = 0
+      n2 = 0
+      n3 = 0
+      approval_monthly_edit_params.each do |id, item|
+        if (item[:change] == "1") # なし,承認,否認は== 1と定義、申請中だと更新せず、1なら更新する。以下処理
+          attendance = Attendance.find(id)
+          if item[:edit_status] == "なし" # 変更申請を無かったことにする'なし'
+            n1 += 1 # 終了予定時間,翌日,業務処理内容,モーダル内の上長の名前
+            item[:scheduled_end_time] = nil
+            item[:overtime_next_day] = nil
+            item[:overtime_detail] = nil
+            item[:overtime_confirmation] = nil
+          elsif item[:edit_status] == "承認"
+            n2 += 1
+          elsif item[:edit_status] == "否認"
+            n3 += 1
+          end
+          attendance.update_attributes!(item) # 例外処理を返す為の'!'
+        end
+        # o1,o2,o3が全て0なら更新しない        
+      end
+      flash[:success] = "残業申請　なし#{n1}件、承認#{n2}件、否認#{n3}件"
+      redirect_to user_url(@user) and return # リダイレクトしたらここで終わりなさい、の意味(and return)
+    end
+  rescue ActiveRecord::RecordInvalid
+    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+    redirect_to user_url(@user) and return
   end
 
   private
@@ -150,11 +179,18 @@ class AttendancesController < ApplicationController
       end
     end
 
+    # 残業申請の更新
     def overtime_params
       params.require(:attendance).permit(:scheduled_end_time, :overtime_next_day, :overtime_detail, :overtime_confirmation, :overtime_status)
     end
 
+    # "残業申請のお知らせ"モーダル更新
     def approval_overtime_params
       params.require(:user).permit(attendances: [:scheduled_end_time, :overtime_next_day, :overtime_detail, :overtime_confirmation, :overtime_status, :change])[:attendances]
+    end
+
+    # 勤怠変更申請の更新情報
+    def approval_monthly_edit_params
+      params.require(:user).permit(attendances: [:edit_status, :change])[:attendances]
     end
 end
