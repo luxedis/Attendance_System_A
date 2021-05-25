@@ -36,7 +36,7 @@
                 <% end %>
               </td>
               <td><%= attendance.text_field :note, class: "form-control" %></td> <!--備考-->
-              <td><%= attendance.collection_select :edit_authorizer, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %></td> <!--指示者確認印-->
+              <td><%= attendance.collection_select :edit_confirmation, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %></td> <!--指示者確認印-->
             </tr>
           <% end %>
         <% end %>

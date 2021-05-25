@@ -33,14 +33,14 @@ class AttendancesController < ApplicationController
   def update_one_month
     ActiveRecord::Base.transaction do # トランザクション(分割できないワンセット処理の事)の開始
       attendances_params.each do |id, item|
-        if item[:edit_authorizer].present?
+        if item[:edit_confirmation].present?
           if item[:edit_started_at].present? && item[:edit_finished_at].blank?
             flash[:danger] = "退勤時間が入力されていません。"
             redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
           elsif item[:edit_started_at].blank? && item[:edit_finished_at].present?
             flash[:danger] = "出社時間が入力されていません。"
             redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-          # elsif item[:edit_authorizer].blank?
+          # elsif item[:edit_confirmation].blank?
           #   flash[:danger] = "上長を選択してください。"
           #   redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
           elsif item[:note].blank?
@@ -84,7 +84,7 @@ class AttendancesController < ApplicationController
     else
       params[:attendance][:overtime_status] = "申請中" #申請中の物だけモーダルに表示したいから
       @attendance.update_attributes(overtime_params) # ここで選択した上長のデータが入っている/private内のovertime_paramsをここで更新
-      debugger
+      # debugger
       flash[:success] = "残業を申請しました"
       redirect_to @user
     end
@@ -133,7 +133,7 @@ class AttendancesController < ApplicationController
   # 一か月分の変更申請モーダル表示
   def approval_monthly_edit
     @user = User.find(params[:user_id])
-    @attendances = Attendance.where(edit_authorizer: @user.name, edit_status: "申請中").order(:user_id).group_by(&:user_id)
+    @attendances = Attendance.where(edit_confirmation: @user.name, edit_status: "申請中").order(:user_id).group_by(&:user_id)
   end
 
   # 勤怠変更の承認モーダル更新
@@ -151,7 +151,7 @@ class AttendancesController < ApplicationController
             item[:edit_started_at] = nil
             item[:edit_finished_at] = nil
             item[:note] = nil
-            item[:edit_authorizer] = nil
+            item[:edit_confirmation] = nil
           elsif item[:edit_status] == "承認"
             n2 += 1
           elsif item[:edit_status] == "否認"
@@ -182,7 +182,7 @@ class AttendancesController < ApplicationController
 
     # 勤怠変更申請の勤怠情報を扱う
     def attendances_params
-      params.require(:user).permit(attendances: [:edit_started_at, :edit_finished_at, :edit_next_day, :note, :edit_authorizer, :edit_status])[:attendances]
+      params.require(:user).permit(attendances: [:edit_started_at, :edit_finished_at, :edit_next_day, :note, :edit_confirmation, :edit_status])[:attendances]
     end
     
     # 勤怠変更申請の更新情報
