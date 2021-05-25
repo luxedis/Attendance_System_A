@@ -23,13 +23,13 @@
               <td><%= l(day.worked_on, format: :short) %></td> <!-- l(day, format: :short --> <!--日付-->
               <td class='<%= "wday#{day.worked_on.wday}"%>'><%= $days_of_the_week[day.worked_on.wday] %></td> <!--[day.wday]-->
               <% if Date.current < day.worked_on %> <!-- !current_user.admin? && を外した状態-->
-                <td><%= attendance.time_field :started_at, readonly: true, class: "form-control" %></td>
-                <td><%= attendance.time_field :finished_at, readonly: true, class: "form-control" %></td>
+                <td><%= attendance.time_field :edit_started_at, readonly: true, class: "form-control" %></td>
+                <td><%= attendance.time_field :edit_finished_at, readonly: true, class: "form-control" %></td>
               <% else %>
-                <td><%= attendance.time_field :started_at, class: "form-control" %></td>
-                <td><%= attendance.time_field :finished_at, class: "form-control" %></td>
+                <td><%= attendance.time_field :edit_started_at, class: "form-control" %></td>
+                <td><%= attendance.time_field :edit_finished_at, class: "form-control" %></td>
               <% end %>
-              <td><%= attendance.check_box :overtime_next_day %></td> <!--翌日-->
+              <td><%= attendance.check_box :edit_next_day %></td> <!--翌日-->
               <td>
                 <% if day.started_at.present? && day.finished_at.present? %>
                   <%= working_times(day.started_at, day.finished_at) %> <!--在社時間-->

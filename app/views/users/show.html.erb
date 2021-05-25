@@ -41,7 +41,7 @@
       <% if @approval_monthly_edit %>
         <span style="color: red">
           <%= link_to "【勤怠変更申請のお知らせ】", approval_monthly_edit_user_attendances_path(@user), remote: true, class: "approval_message" %>
-          <b stlye="margin-bottom: 1px; border: 3px solid red;"><%= @approval_monthly_report %>件の通知があります</b>
+          <b stlye="margin-bottom: 1px; border: 3px solid red;"><%= @approval_monthly_edit %>件の通知があります</b>
         </span>
       <% else %>
         【勤怠変更申請のお知らせ】
