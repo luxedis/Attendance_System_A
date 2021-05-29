@@ -33,6 +33,8 @@ Rails.application.routes.draw do
       collection do
         get 'edit_approval_overtime' # collection付けるとurlにidが付かなくてOKになる
         patch 'update_approval_overtime'
+        get 'approval_monthly_edit' # 勤怠変更申請お知らせモーダル表示
+        patch 'update_approval_monthly_edit' # 勤怠変更申請お知らせモーダル更新
       end
     end
   end

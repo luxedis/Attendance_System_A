@@ -7,12 +7,12 @@
         <tr>
           <th>日付</th>
           <th>曜日</th>
-          <th>出社</th>
-          <th>退社</th>
+          <th>出勤</th>
+          <th>退勤</th>
+          <th>翌日</th>
           <th>在社時間</th>
           <th>備考</th>
-          <th>残業指示</th>
-          <th>指示書</th>
+          <th>指示者確認㊞</th>
         </tr>
       </thead>
       
@@ -20,23 +20,24 @@
         <% @attendances.each do |day| %> <!-- @attendances= (@first_day..@last_day). -->
           <%= f.fields_for "attendances[]", day do |attendance| %>  <!--form_withで指定したカラム以外のモデルを使いたい時は21行めのfields_forでカラムを変えてあげる-->
             <tr>
-              <td><%= l(day.worked_on, format: :short) %></td> <!-- l(day, format: :short -->
+              <td><%= l(day.worked_on, format: :short) %></td> <!-- l(day, format: :short --> <!--日付-->
               <td class='<%= "wday#{day.worked_on.wday}"%>'><%= $days_of_the_week[day.worked_on.wday] %></td> <!--[day.wday]-->
               <% if Date.current < day.worked_on %> <!-- !current_user.admin? && を外した状態-->
-                <td><%= attendance.time_field :started_at, readonly: true, class: "form-control" %></td>
-                <td><%= attendance.time_field :finished_at, readonly: true, class: "form-control" %></td>
+                <td><%= attendance.time_field :edit_started_at, readonly: true, class: "form-control" %></td>
+                <td><%= attendance.time_field :edit_finished_at, readonly: true, class: "form-control" %></td>
               <% else %>
-                <td><%= attendance.time_field :started_at, class: "form-control" %></td>
-                <td><%= attendance.time_field :finished_at, class: "form-control" %></td>
-              <% end %>  
+                <td><%= attendance.time_field :edit_started_at, class: "form-control" %></td>
+                <td><%= attendance.time_field :edit_finished_at, class: "form-control" %></td>
+              <% end %>
+              <td><%= attendance.check_box :edit_next_day %></td> <!--翌日-->
               <td>
-                <% if day.started_at.present? && day.finished_at.present? %>
-                  <%= working_times(day.started_at, day.finished_at) %>
+                <% if day.edit_started_at.present? && day.edit_finished_at.present? %>
+                  <%= overtime_info(day.edit_finished_at, day.edit_started_at,  day.edit_next_day) %> <!--引数を渡す 1個目-2個目　の引数で成立する計算式-->
+                  <!--< %= working_times(day.edit_started_at, day.edit_finished_at, day.edit_next_day) %>--> <!--在社時間-->
                 <% end %>
               </td>
-              <td><%= attendance.text_field :note, class: "form-control" %></td>
-              <td></td>
-              <td></td>
+              <td><%= attendance.text_field :note, class: "form-control" %></td> <!--備考-->
+              <td><%= attendance.collection_select :edit_confirmation, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %></td> <!--指示者確認印-->
             </tr>
           <% end %>
         <% end %>
@@ -46,6 +47,6 @@
   
   <div class="center">
     <%= link_to "キャンセル", user_path(date: @first_day), class: "btn btn-lg btn-default" %>
-    <%= f.submit "1ヶ月分の編集を保存", class: "btn btn-lg btn-default" %>
+    <%= f.submit "編集を送信する", class: "btn btn-lg btn-default" %>
   </div>
 <% end %>
