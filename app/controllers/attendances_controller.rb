@@ -33,7 +33,7 @@ class AttendancesController < ApplicationController
   def update_one_month
     ActiveRecord::Base.transaction do # トランザクション(分割できないワンセット処理の事)の開始
       attendances_params.each do |id, item|
-        if item[:edit_confirmation].present?
+        if item[:edit_confirmation].present? # 上長の入力がある項目のみを拾う
           if item[:edit_started_at].present? && item[:edit_finished_at].blank?
             flash[:danger] = "退勤時間が入力されていません。"
             redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
@@ -145,15 +145,29 @@ class AttendancesController < ApplicationController
       n3 = 0
       approval_monthly_edit_params.each do |id, item|
         if (item[:change] == "1") # なし,承認,否認は== 1と定義、申請中だと更新せず、1なら更新する。以下処理
-          attendance = Attendance.find(id)
-          if item[:edit_status] == "なし" # 変更申請を無かったことにする'なし'
-            n1 += 1 # 終了予定時間,翌日,業務処理内容,モーダル内の上長の名前
-            item[:edit_started_at] = nil
-            item[:edit_finished_at] = nil
-            item[:note] = nil
-            item[:edit_confirmation] = nil
-          elsif item[:edit_status] == "承認"
+          attendance = Attendance.find(id) # idで更新するレコードを特定する。
+          if item[:edit_status] == "承認"
+            n1 += 1
+            if attendance.before_started_at.nil? # 変更するから、一番最初の時間を残したい、
+              attendance.before_started_at = attendance.started_at # attendanceの中に更新するレコードがいる/ログ変更前の記録を残したい
+            end
+            if attendance.before_finished_at.nil?
+              attendance.before_finished_at = attendance.finished_at
+            end
+            attendance.started_at = attendance.edit_started_at
+            attendance.finished_at = attendance.edit_finished_at
+            attendance.approval_date = Date.today # 承認日付
+          elsif item[:edit_status] == "なし"
             n2 += 1
+            if attendance.edit_status == "承認" || "否認" # 前回承認or否認して今回なしにした時の為に、記録を残したい。
+              item[:edit_status] = attendance.edit_status # これをしてあげないとitem[:edit_status] =="なし"だけ残ってしまう.
+            else
+              attendance.edit_started_at = nil
+              attendance.edit_finished_at = nil
+              attendance.edit_next_day = nil
+              attendance.note = nil
+              attendance.edit_confirmation = nil
+            end
           elsif item[:edit_status] == "否認"
             n3 += 1
           end
@@ -161,7 +175,7 @@ class AttendancesController < ApplicationController
         end
         # o1,o2,o3が全て0なら更新しない        
       end
-      flash[:success] = "勤怠変更申請　なし#{n1}件、承認#{n2}件、否認#{n3}件"
+      flash[:success] = "勤怠変更申請　なし#{n2}件、承認#{n1}件、否認#{n3}件"
       redirect_to user_url(@user) and return # リダイレクトしたらここで終わりなさい、の意味(and return)
     end
   rescue ActiveRecord::RecordInvalid

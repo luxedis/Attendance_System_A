@@ -31,8 +31,9 @@
               <% end %>
               <td><%= attendance.check_box :edit_next_day %></td> <!--翌日-->
               <td>
-                <% if day.started_at.present? && day.finished_at.present? %>
-                  <%= working_times(day.started_at, day.finished_at) %> <!--在社時間-->
+                <% if day.edit_started_at.present? && day.edit_finished_at.present? %>
+                  <%= overtime_info(day.edit_finished_at, day.edit_started_at,  day.edit_next_day) %> <!--引数を渡す 1個目-2個目　の引数で成立する計算式-->
+                  <!--< %= working_times(day.edit_started_at, day.edit_finished_at, day.edit_next_day) %>--> <!--在社時間-->
                 <% end %>
               </td>
               <td><%= attendance.text_field :note, class: "form-control" %></td> <!--備考-->

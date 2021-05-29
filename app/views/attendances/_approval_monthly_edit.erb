@@ -49,16 +49,16 @@
                       <td><%= l(day.started_at, format: :min) if day.started_at.present? %></td> <!--変更前 出社 分-->
                       <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td> <!--変更前 退社 時-->
                       <td><%= l(day.finished_at, format: :min) if day.finished_at.present? %></td> <!--変更前 退社 時-->
-                      <td><%= l(day.edit_started_at, format: :hour) %></td> <!--変更後 出社 時-->
-                      <td><%= l(day.edit_started_at, format: :min) %></td> <!--変更後 出社 時-->
-                      <td><%= l(day.edit_finished_at, format: :hour) %></td> <!--変更後 退社 時-->
-                      <td><%= l(day.edit_finished_at, format: :min) %></td> <!--変更後 退社 時-->
-                      <td><%= d.text_field :note, class: "form-control" %></td> <!--備考-->
+                      <td><%= l(day.edit_started_at, format: :hour) if day.edit_started_at.present? %></td> <!--変更後 出社 時-->
+                      <td><%= l(day.edit_started_at, format: :min) if day.edit_started_at.present? %></td> <!--変更後 出社 時-->
+                      <td><%= l(day.edit_finished_at, format: :hour) if day.edit_finished_at.present? %></td> <!--変更後 退社 時-->
+                      <td><%= l(day.edit_finished_at, format: :min) if day.edit_finished_at.present? %></td> <!--変更後 退社 時-->
+                      <td><%= day.note %></td> <!--備考-->
                       <td>
                         <%= d.select :edit_status, ['なし', '申請中', '承認', '否認'], {include_blank: true}, class: "form_control" %> <!--form_withの|f|と同じ意味のブロック変数/30行目で定義している-->
                       </td> <!--                                                         ⬆️ d.selectの中で,ブランクを有効にする-->
                       <td><%= d.check_box :change, class: "change" %></td> <!--"変更"のcheckbox-->
-                      <td><%= link_to "確認", confirm_one_month_user_path(user, date: day.worked_on), method: :get, class: "btn btn-primary btn-md" %></td> <!--11行目で定義しているuserを使う-->
+                      <td><%= link_to "確認", confirm_one_month_user_path(user, date: day.worked_on), method: :get, class: "btn btn-primary btn-sm" %></td> <!--11行目で定義しているuserを使う-->
                     </tr> <!--users_controllerのparams[:date]を渡してあげる為、date:としてからday.を使ってworked_onを渡してあげる-->
                   </tbody>
                 <% end %>

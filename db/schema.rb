@@ -27,10 +27,10 @@ ActiveRecord::Schema.define(version: 20210226092204) do
     t.datetime "before_finished_at"
     t.datetime "edit_started_at"
     t.datetime "edit_finished_at"
-    t.boolean "before_next_day"
     t.boolean "edit_next_day"
     t.string "edit_status"
     t.string "edit_confirmation"
+    t.date "approval_date"
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
