@@ -29,13 +29,12 @@
 <!--申請のお知らせ-->
   <% if @user.superior? %>
     <div>
-    <!--
-      <% if @approval_manager_notice %> # users_controllerで定義する
+      <% if @approval_monthly_report > 0 %>
         <span style="color: red">
-          <%= link_to "【所属長承認申請のお知らせ】",'#', remote: true, class: "approval_message" %>
+          <%= link_to "【所属長承認申請のお知らせ】", approval_monthly_report_user_attendances_path(@user), remote: true, class: "approval_message" %>
           <b stlye="margin-bottom: 1px; border: 3px solid red;"><%= @approval_monthly_report %>件の通知があります</b>
         </span>
-      <% else %> -->
+      <% else %>
         【所属長承認申請のお知らせ】
       <!--<% end %> --><br>
       <% if @approval_monthly_edit > 0 %> <!--０件以上なら表示しなさい、の意味-->
@@ -158,8 +157,12 @@
         <td colspan="5"></td>
         <td>
           <!--1ヶ月勤怠所属長承認申請-->
+          <%= form_with(model: @user, url: '#', local: true, method: :patch) do |f| %>
+            <%= f.hidden_field :'#', :value => "申請中" %>
+            <%= f.hidden_field :'#', :value => @last_day %>
           <%= "所属長承認　未" %><br>
             <%= link_to "申請", class: "btn btn-md btn-primary" %>
+          <% end %>
         </td>
       </tr>
     </tfoot>
@@ -170,5 +173,5 @@
 <div id="edit-overtime-request" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> <!--残業申請-->
 <div id="approval-overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> <!-- 上長が残業申請を承認するモーダル -->
 <div id="approval-monthly-edit" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> <!-- 上長が一か月分の勤怠編集を承認する -->
-  <!-- <div id="approval-monthly-report" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 一か月分の承認 --> 
-  <!-- <div id="approved-log" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 一か月編集で承認した勤怠ログの表示で、残業とが関係ない -->
+<div id="approval-monthly-report" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> <!-- 一か月分の承認 -->
+<!-- <div id="approved-log" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 一か月編集で承認した勤怠ログの表示で、残業とが関係ない -->

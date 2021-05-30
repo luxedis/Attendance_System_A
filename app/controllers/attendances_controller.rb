@@ -40,7 +40,7 @@ class AttendancesController < ApplicationController
           elsif item[:edit_started_at].blank? && item[:edit_finished_at].present?
             flash[:danger] = "出社時間が入力されていません。"
             redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-          # elsif item[:edit_confirmation].blank?
+          # elsif item[:edit_confirmation].blank?  上長の入力がある項目のみ扱っているので、上記の該当コードがなければ左記を復活させる
           #   flash[:danger] = "上長を選択してください。"
           #   redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
           elsif item[:note].blank?
@@ -148,7 +148,7 @@ class AttendancesController < ApplicationController
           attendance = Attendance.find(id) # idで更新するレコードを特定する。
           if item[:edit_status] == "承認"
             n1 += 1
-            if attendance.before_started_at.nil? # 変更するから、一番最初の時間を残したい、
+            if attendance.before_started_at.nil? # 変更する項目だから、一番最初の時間を残したい。before_started_atがカラだったstarted_atを保存する
               attendance.before_started_at = attendance.started_at # attendanceの中に更新するレコードがいる/ログ変更前の記録を残したい
             end
             if attendance.before_finished_at.nil?
@@ -156,13 +156,13 @@ class AttendancesController < ApplicationController
             end
             attendance.started_at = attendance.edit_started_at
             attendance.finished_at = attendance.edit_finished_at
-            attendance.approval_date = Date.today # 承認日付
+            attendance.approval_date = Date.today # 承認日付、ログ用
           elsif item[:edit_status] == "なし"
             n2 += 1
             if attendance.edit_status == "承認" || "否認" # 前回承認or否認して今回なしにした時の為に、記録を残したい。
               item[:edit_status] = attendance.edit_status # これをしてあげないとitem[:edit_status] =="なし"だけ残ってしまう.
             else
-              attendance.edit_started_at = nil
+              attendance.edit_started_at = nil # "承認"or"否認"の場合は以下をnilにする
               attendance.edit_finished_at = nil
               attendance.edit_next_day = nil
               attendance.note = nil
@@ -181,6 +181,46 @@ class AttendancesController < ApplicationController
   rescue ActiveRecord::RecordInvalid
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
     redirect_to user_url(@user) and return
+  end
+
+  # 一ヶ月分の勤怠
+  def approval_monthly_report
+    @user = User.find(params[:user_id])
+    @attendances = Attendance.where(monthly_confirmation: @user.name, monthly_status: "申請中").order(:user_id).group_by(&:user_id)
+  end
+
+  # 一ヶ月分の勤怠承認
+  def update_approval_monthly_report
+    @user = User.find(params[:user_id])
+    ActiveRecord::Base.transaction do
+      n1 = 0
+      n2 = 0
+      n3 = 0
+      approval_monthly_report_params.each do |id, item|
+        if (item[:change] == "1") # なし,承認,否認は== 1と定義、申請中だと更新せず、1なら更新する。以下処理
+          attendance = Attendance.find(id)
+          if item[:overtime_status] == "なし" # 残業申請を無かったことにする'なし'
+            n1 += 1 # 終了予定時間,翌日,業務処理内容,モーダル内の上長の名前
+            item[:scheduled_end_time] = nil
+            item[:overtime_next_day] = nil
+            item[:overtime_detail] = nil
+            item[:overtime_confirmation] = nil
+          elsif item[:overtime_status] == "承認"
+            n2 += 1
+          elsif item[:overtime_status] == "否認"
+            n3 += 1
+          end
+          attendance.update_attributes!(item) # 例外処理を返す為の'!'
+        end
+        # o1,o2,o3が全て0なら更新しない        
+      end
+      flash[:success] = "残業申請　なし#{n1}件、承認#{n2}件、否認#{n3}件"
+      redirect_to user_url(@user) and return # リダイレクトしたらここで終わりなさい、の意味(and return)
+    end
+    redirect_to @user
+  rescue ActiveRecord::RecordInvalid
+    flash[:danger] = "無効な入力データがあった為、変更をキャンセルしました。"
+    redirect_to @user
   end
 
   private
@@ -202,6 +242,11 @@ class AttendancesController < ApplicationController
     # 勤怠変更申請の更新情報
     def approval_monthly_edit_params
       params.require(:user).permit(attendances: [:edit_status, :change])[:attendances]
+    end
+
+    # 一ヶ月分勤怠申請承認
+    def approval_monthly_report_params
+      params.require(:user).permit(attendances: [:monthly_status, :change])[:attendances]
     end
 
 
