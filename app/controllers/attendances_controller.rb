@@ -118,6 +118,7 @@ class AttendancesController < ApplicationController
           elsif item[:overtime_status] == "否認"
             n3 += 1
           end
+          item[:change] = "0" # 過去の承認で変更にチェックを入れたのが、そのまま残ってしまうのを避ける為
           attendance.update_attributes!(item) # 例外処理を返す為の'!'
         end
         # o1,o2,o3が全て0なら更新しない        
@@ -130,7 +131,7 @@ class AttendancesController < ApplicationController
     redirect_to user_url(@user) and return
   end
 
-  # 一か月分の変更申請モーダル表示
+  # ◯◯からの(1ヶ月分の)勤怠変更申請モーダル表示
   def approval_monthly_edit
     @user = User.find(params[:user_id])
     @attendances = Attendance.where(edit_confirmation: @user.name, edit_status: "申請中").order(:user_id).group_by(&:user_id)
@@ -171,6 +172,7 @@ class AttendancesController < ApplicationController
           elsif item[:edit_status] == "否認"
             n3 += 1
           end
+          item[:change] = "0" # 過去の承認で変更にチェックを入れたのが、そのまま残ってしまうのを避ける為
           attendance.update_attributes!(item) # 例外処理を返す為の'!'
         end
         # o1,o2,o3が全て0なら更新しない        
@@ -183,38 +185,48 @@ class AttendancesController < ApplicationController
     redirect_to user_url(@user) and return
   end
 
-  # 一ヶ月分の勤怠
+  # 1ヶ月分の勤怠承認/上長への申請ボタン
+  def monthly_approval_request
+    @user = User.find(params[:id]) # @userでuser_idが特定できる
+    attendance = @user.attendances.find_by(worked_on: params[:user][:worked_on]) # showのworked_on,195行目とセット,月初日のレコードを更新したい
+    if params[:user][:monthly_confirmation].blank? #
+      flash[:danger] = "所属長を選択してください。"
+    else
+      attendance.update_attributes!(monthly_approval_params) # @をつけるのはインスタンス変数にするためで、viewファイルに渡すためで、ここはviewに渡さないから@いらない
+      flash[:success] = "#{@user.name}の1ヶ月分の申請をしました。"
+    end
+    redirect_to user_url(@user)
+  end
+
+  # 1ヶ月分の勤怠
   def approval_monthly_report
     @user = User.find(params[:user_id])
     @attendances = Attendance.where(monthly_confirmation: @user.name, monthly_status: "申請中").order(:user_id).group_by(&:user_id)
   end
 
-  # 一ヶ月分の勤怠承認
+  # 1ヶ月分の勤怠承認
   def update_approval_monthly_report
     @user = User.find(params[:user_id])
     ActiveRecord::Base.transaction do
       n1 = 0
       n2 = 0
       n3 = 0
-      approval_monthly_report_params.each do |id, item|
+      approval_monthly_report_params.each do |id, item| # 依頼来るのが複数人だからeachする必要がある
         if (item[:change] == "1") # なし,承認,否認は== 1と定義、申請中だと更新せず、1なら更新する。以下処理
           attendance = Attendance.find(id)
-          if item[:overtime_status] == "なし" # 残業申請を無かったことにする'なし'
+          if item[:monthly_status] == "なし" # 残業申請を無かったことにする'なし'
             n1 += 1 # 終了予定時間,翌日,業務処理内容,モーダル内の上長の名前
-            item[:scheduled_end_time] = nil
-            item[:overtime_next_day] = nil
-            item[:overtime_detail] = nil
-            item[:overtime_confirmation] = nil
-          elsif item[:overtime_status] == "承認"
+          elsif item[:monthly_status] == "承認"
             n2 += 1
-          elsif item[:overtime_status] == "否認"
+          elsif item[:monthly_status] == "否認"
             n3 += 1
           end
+          item[:change] = "0" # 過去の承認で変更にチェックを入れたのが、そのまま残ってしまうのを避ける為
           attendance.update_attributes!(item) # 例外処理を返す為の'!'
         end
         # o1,o2,o3が全て0なら更新しない        
       end
-      flash[:success] = "残業申請　なし#{n1}件、承認#{n2}件、否認#{n3}件"
+      flash[:success] = "所属長承認申請　なし#{n1}件、承認#{n2}件、否認#{n3}件"
       redirect_to user_url(@user) and return # リダイレクトしたらここで終わりなさい、の意味(and return)
     end
     redirect_to @user
@@ -242,6 +254,11 @@ class AttendancesController < ApplicationController
     # 勤怠変更申請の更新情報
     def approval_monthly_edit_params
       params.require(:user).permit(attendances: [:edit_status, :change])[:attendances]
+    end
+
+    # 1ヶ月分の勤怠承認/上長への申請ボタン
+    def monthly_approval_params
+      params.require(:user).permit(:worked_on, :monthly_status, :monthly_confirmation)
     end
 
     # 一ヶ月分勤怠申請承認

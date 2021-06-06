@@ -6,7 +6,7 @@
       </button>
     </div>
     <div class="modal-body">
-      <%= form_with(model: @user, url: update_monthly_approval_user_attendances_path(@user), local: true, method: :patch) do |f| %>
+      <%= form_with(model: @user, url: update_approval_monthly_report_user_attendances_path(@user), local: true, method: :patch) do |f| %>
         <% @attendances.each do |id, attendances| %>
           <% user = User.find(id) %>
           <h2 class="modal-title">【<%= user.name %>からの1ヵ月分勤怠申請】</h2>
@@ -29,7 +29,7 @@
                         <td class="center"><%= att.select :monthly_status, ['なし', '申請中', '承認', '否認'], {include_blank: true}, class: "form_control" %></td>
                         <td class="center"><%= att.check_box :change, class: "change" %></td>
                         <td class="center">
-                          <%= link_to "確認", confirm_one_month_user_path(@user, attendance_id: day.id), class: "btn btn-primary btn-md" %>
+                          <%= link_to "確認", confirm_one_month_user_path(user, date: day.worked_on), class: "btn btn-primary btn-md" %>
                         </td>
                       </tr>
                     </tbody>
