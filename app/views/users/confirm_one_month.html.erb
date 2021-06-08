@@ -109,6 +109,15 @@
         <td><%= format("%.2f", @total_working_times.to_f) %></td>
         <td colspan="5"></td>
         <td>
+          <!--<% if @monthly_attendance.edit_status == "申請中" %>
+            <%= @monthly_attendance.edit_confirmation %>へ<%= @monthly_attendance.edit_status %><br>
+          <% elsif @monthly_attendance.edit_status == "承認" %>
+            <%= @monthly_attendance.edit_confirmation %>から<%= @monthly_attendance.edit_status %>済<br>
+          <% elsif @monthly_attendance.edit_status == "否認" %>
+            <%= @monthly_attendance.edit_confirmation %>から<%= @monthly_attendance.edit_status %>済<br>
+          <% else %>
+            <div>所属長承認　未</div><br>
+          <% end %>
           <% if @monthly_attendance.monthly_status == "申請中" %>
             <%= @monthly_attendance.monthly_confirmation %>へ<%= @monthly_attendance.monthly_status %><br>
           <% elsif @monthly_attendance.monthly_status == "承認" %>
@@ -117,7 +126,7 @@
             <%= @monthly_attendance.monthly_confirmation %>から<%= @monthly_attendance.monthly_status %>済<br>
           <% else %>
             <div>所属長承認　未</div><br>
-          <% end %>  
+          <% end %>-->
         </td>
       </tr>
     </tfoot>
