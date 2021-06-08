@@ -136,20 +136,20 @@
           <td><%= day.overtime_detail %></td>
           <td>
             <% if day.overtime_status == "申請中" %>
-              <td><%= day.overtime_confirmation %>に残業申請中</td>
+              <div><%= day.overtime_confirmation %>に残業申請中</div>
             <% elsif day.overtime_status == "承認" %>
-              <td>残業承認済</td>
+              <div>残業承認済</div>
             <% elsif day.overtime_status == "否認" %>
-              <td>残業申請否認</td>
+              <div>残業申請否認</div>
             <% else %>
               <!--<td><%= day.overtime_status %></td>-->
             <% end %>
             <% if day.edit_status == "申請中" %>
-              <td><%= day.edit_confirmation %>に残業申請中</td>
+              <div><%= day.edit_confirmation %>に残業申請中</div>
             <% elsif day.edit_status == "承認" %>
-              <td>勤怠変更承認済</td>
+              <div>勤怠変更承認済</div>
             <% elsif day.edit_status == "否認" %>
-              <td>勤怠変更申請否認</td>
+              <div>勤怠変更申請否認</div>
             <% else %>
               <!--<td><%= day.edit_status %></td>-->
             <% end %>
@@ -168,11 +168,22 @@
         <td colspan="5"></td>
         <td>
           <!--1ヶ月勤怠所属長承認申請-->
+          <% if @monthly_attendance.monthly_status == "申請中" %>
+            <div>所属長承認</div>
+            <%= @monthly_attendance.monthly_confirmation %>へ<%= @monthly_attendance.monthly_status %><br>
+          <% elsif @monthly_attendance.monthly_status == "承認" %>
+            <div>所属長承認</div>
+            <%= @monthly_attendance.monthly_confirmation %>から<%= @monthly_attendance.monthly_status %>済<br>
+          <% elsif @monthly_attendance.monthly_status == "否認" %>
+            <div>所属長承認</div>
+            <%= @monthly_attendance.monthly_confirmation %>から<%= @monthly_attendance.monthly_status %>済<br>
+          <% else %>
+            <div>所属長承認　未</div><br>
+          <% end %>
           <%= form_with(model: @user, url: attendances_monthly_approval_request_user_path(@user), local: true, method: :patch) do |f| %>
             <%= f.hidden_field :monthly_status, :value => "申請中" %>
             <%= f.hidden_field :worked_on, :value => @first_day %>
-          <%= "所属長承認　未" %><br>
-            <%= f.collection_select :monthly_confirmation, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %><br>
+            <div><%= f.collection_select :monthly_confirmation, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %></div><br>
             <%= f.submit "申請", class: "btn btn-primary btn-block" %>
           <% end %>
         </td>

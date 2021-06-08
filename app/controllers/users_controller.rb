@@ -31,6 +31,7 @@ require 'csv'
     @approval_monthly_report = Attendance.where(monthly_confirmation: @user.name, monthly_status: "申請中").size
     @approval_monthly_edit = Attendance.where(edit_confirmation: @user.name, edit_status: "申請中").size
     @overtime_notice = Attendance.where(overtime_confirmation: @user.name, overtime_status: "申請中").size # 件数の表示のみ
+    @monthly_attendance = @user.attendances.find_by(worked_on: @first_day)
   end
   
   def new
@@ -114,6 +115,7 @@ require 'csv'
     @first_day = params[:date].to_date.beginning_of_month
     @last_day = @first_day.end_of_month
     @attendances = @user.attendances.where(worked_on: @first_day..@last_day).order(:worked_on)
+    @monthly_attendance = @user.attendances.find_by(worked_on: @first_day)
   end
 
   private
