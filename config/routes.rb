@@ -38,6 +38,7 @@ Rails.application.routes.draw do
         patch 'update_approval_monthly_edit' # 勤怠変更申請お知らせモーダル更新
         get 'approval_monthly_report' # 一ヶ月分勤怠申請モーダル表示
         patch 'update_approval_monthly_report' # 一ヶ月分勤怠申請モーダル更新
+        get 'attendance_log' # 勤怠ログ
       end
     end
   end

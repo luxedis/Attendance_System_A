@@ -19,7 +19,7 @@
       <td>所属:<%= @user.affiliation.present? ? @user.affiliation : "未所属" %></td>
       <td>名前:<%= @user.name %></td>
       <td>コード</td>
-      <td></td>
+      <td><%= @user.employee_number %></td>
       <td>出勤日数:<%= @worked_sum %>日</td>
       <td>締め:<%= l(@last_day, format: :short) %></td>
     </tr>
@@ -92,7 +92,7 @@
     <!--各種処理区分-->
     <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(@user, date: @first_day), class: "btn btn-primary" %>
     <%= link_to "CSV出力", user_path(@user, date: @first_day, format: :csv), class: "btn btn-primary" %><br>
-    <%= link_to "勤怠修正ログ（承認済）", '#', class: "btn btn-primary" %>
+    <%= link_to "勤怠修正ログ（承認済）", attendance_log_user_attendances_path(@user), remote: true, class: "btn btn-primary" %> <!--モーダル-->
     <tbody>
       <% @attendances.each do |day| %> <!-- @attendances= (@first_day..@last_day). -->
         <tr>
@@ -169,13 +169,10 @@
         <td>
           <!--1ヶ月勤怠所属長承認申請-->
           <% if @monthly_attendance.monthly_status == "申請中" %>
-            <div>所属長承認</div>
             <%= @monthly_attendance.monthly_confirmation %>へ<%= @monthly_attendance.monthly_status %><br>
           <% elsif @monthly_attendance.monthly_status == "承認" %>
-            <div>所属長承認</div>
             <%= @monthly_attendance.monthly_confirmation %>から<%= @monthly_attendance.monthly_status %>済<br>
           <% elsif @monthly_attendance.monthly_status == "否認" %>
-            <div>所属長承認</div>
             <%= @monthly_attendance.monthly_confirmation %>から<%= @monthly_attendance.monthly_status %>済<br>
           <% else %>
             <div>所属長承認　未</div><br>
@@ -197,4 +194,4 @@
 <div id="approval-overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> <!-- 上長が残業申請を承認するモーダル -->
 <div id="approval-monthly-edit" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> <!-- 上長が一か月分の勤怠編集を承認する -->
 <div id="approval-monthly-report" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> <!-- 一か月分の承認 -->
-<!-- <div id="approved-log" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 一か月編集で承認した勤怠ログの表示で、残業とが関係ない -->
+<div id="attendance-log" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>  <!--一か月編集で承認した勤怠ログの表示で、残業とが関係ない-->

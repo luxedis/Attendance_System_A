@@ -235,6 +235,18 @@ class AttendancesController < ApplicationController
     redirect_to @user
   end
 
+  def attendance_log
+    @user = User.find(params[:user_id])
+    if params["select_year(1i)"].present? && params["select_month(2i)"].present?
+      @first_day = Date.new(params["select_year(1i)"].to_i, params["select_month(2i)"].to_i, params["select_month(3i)"].to_i)
+    else
+      @first_day = Date.today.to_date.beginning_of_month # 選択された日か、月初日になるから
+    end
+    @last_day = @first_day.end_of_month
+    @attendances = @user.attendances.where(worked_on: @first_day..@last_day).where(edit_status: "承認").order(worked_on: "ASC") # 日付順
+  end
+
+
   private
     # 残業申請の更新
     def overtime_params
@@ -265,7 +277,6 @@ class AttendancesController < ApplicationController
     def approval_monthly_report_params
       params.require(:user).permit(attendances: [:monthly_status, :change])[:attendances]
     end
-
 
     # beforeフィルター
     def admin_or_correct_user
