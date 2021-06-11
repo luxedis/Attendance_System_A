@@ -31,6 +31,8 @@ ActiveRecord::Schema.define(version: 20210226092204) do
     t.string "edit_status"
     t.string "edit_confirmation"
     t.date "approval_date"
+    t.string "monthly_status"
+    t.string "monthly_confirmation"
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

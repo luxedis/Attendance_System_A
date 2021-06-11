@@ -17,7 +17,7 @@
       <td>所属:<%= @user.affiliation.present? ? @user.affiliation : "未所属" %></td>
       <td>名前:<%= @user.name %></td>
       <td>コード</td>
-      <td></td>
+      <td><%= @user.employee_number %></td>
       <td>出勤日数:<%= @worked_sum %>日</td>
       <td>締め:<%= l(@last_day, format: :short) %></td>
     </tr>
@@ -87,8 +87,13 @@
               <div>残業承認済</div>
             <% elsif day.overtime_status == "否認" %>
               <div>残業申請否認</div>
-            <% else %>
-              <%= day.overtime_status %>
+            <% end %>
+            <% if day.edit_status == "申請中" %>
+              <div><%= day.edit_confirmation %>に勤怠変更申請中</div>
+            <% elsif day.edit_status == "承認" %>
+              <div>勤怠変更承認済</div>
+            <% elsif day.edit_status == "否認" %>
+              <div>勤怠変更否認</div>
             <% end %>
           </td>
         </tr>
@@ -104,8 +109,16 @@
         <td><%= format("%.2f", @total_working_times.to_f) %></td>
         <td colspan="5"></td>
         <td>
-          <%= "所属長承認　未" %>
-          <%= link_to "申請", class: "btn btn-md btn-primary" %>
+          
+          <% if @monthly_attendance.monthly_status == "申請中" %>
+            <%= @monthly_attendance.monthly_confirmation %>へ<%= @monthly_attendance.monthly_status %><br>
+          <% elsif @monthly_attendance.monthly_status == "承認" %>
+            <%= @monthly_attendance.monthly_confirmation %>から<%= @monthly_attendance.monthly_status %>済<br>
+          <% elsif @monthly_attendance.monthly_status == "否認" %>
+            <%= @monthly_attendance.monthly_confirmation %>から<%= @monthly_attendance.monthly_status %>済<br>
+          <% else %>
+            <div>所属長承認　未</div><br>
+          <% end %>
         </td>
       </tr>
     </tfoot>

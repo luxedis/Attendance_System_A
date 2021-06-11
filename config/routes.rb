@@ -17,7 +17,8 @@ Rails.application.routes.draw do
       patch 'update_basic_info' # 基本情報更新
       patch 'update_all_users_basic_info' # ヘッダーから全ユーザーの勤務時間を一括更新
       get 'attendances/edit_one_month' # 勤怠編集ページのルート
-      patch 'attendances/update_one_month' # 1ヶ月分まとめて更新ボタン
+      patch 'attendances/update_one_month' # 1ヶ月分まとめて更新ボタン/勤怠編集画面
+      patch 'attendances/monthly_approval_request' # 1ヶ月分の勤怠承認/上長への申請ボタン
       get 'confirm_one_month' # 各お知らせモーダル内の勤怠確認ボタン
     end
     collection do
@@ -35,6 +36,9 @@ Rails.application.routes.draw do
         patch 'update_approval_overtime'
         get 'approval_monthly_edit' # 勤怠変更申請お知らせモーダル表示
         patch 'update_approval_monthly_edit' # 勤怠変更申請お知らせモーダル更新
+        get 'approval_monthly_report' # 一ヶ月分勤怠申請モーダル表示
+        patch 'update_approval_monthly_report' # 一ヶ月分勤怠申請モーダル更新
+        get 'attendance_log' # 勤怠ログ
       end
     end
   end

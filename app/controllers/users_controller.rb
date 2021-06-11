@@ -27,8 +27,11 @@ require 'csv'
     end
     # @approval_manager_notice = Attendance.where('#': "申請中", overtime)
     # @attendance_change_notice = Attendance.where('#': "申請中", overtime)
+    @superiors = User.where(superior: true).where.not(id: @user.id)
+    @approval_monthly_report = Attendance.where(monthly_confirmation: @user.name, monthly_status: "申請中").size
     @approval_monthly_edit = Attendance.where(edit_confirmation: @user.name, edit_status: "申請中").size
     @overtime_notice = Attendance.where(overtime_confirmation: @user.name, overtime_status: "申請中").size # 件数の表示のみ
+    @monthly_attendance = @user.attendances.find_by(worked_on: @first_day)
   end
   
   def new
@@ -88,23 +91,6 @@ require 'csv'
     User.import(params[:file])
     redirect_to users_url
   end
-
-  # 勤怠ログ
-  def attendance_log
-  end
-  # def update_all_users_basic_info
-  #   if User.update(update_all_users_basic_info_params)
-  #     # User.update_all(:basic_time => params[:user][:basic_time], :work_time => params[:user][:work_time]) #update_allはストロングパラが使えないので。上記と動きは同じ
-  #     flash[:success] = "全ユーザーの基本情報を更新しました。"
-  #   else
-  #     flash[:danger] = "全ユーザーの更新は失敗しました。<br>" + @user.errors.full_messages.join("<br>")
-  #   end
-  #   redirect_to edit_basic_info_user_url(@user)
-  # end
-  
-  # def search
-  #   @users = User.search(params[:search])
-  # end
   
   # 各お知らせモーダル内の勤怠確認ボタン
   def confirm_one_month
@@ -112,6 +98,7 @@ require 'csv'
     @first_day = params[:date].to_date.beginning_of_month
     @last_day = @first_day.end_of_month
     @attendances = @user.attendances.where(worked_on: @first_day..@last_day).order(:worked_on)
+    @monthly_attendance = @user.attendances.find_by(worked_on: @first_day)
   end
 
   private

@@ -19,7 +19,7 @@
       <td>所属:<%= @user.affiliation.present? ? @user.affiliation : "未所属" %></td>
       <td>名前:<%= @user.name %></td>
       <td>コード</td>
-      <td></td>
+      <td><%= @user.employee_number %></td>
       <td>出勤日数:<%= @worked_sum %>日</td>
       <td>締め:<%= l(@last_day, format: :short) %></td>
     </tr>
@@ -29,15 +29,14 @@
 <!--申請のお知らせ-->
   <% if @user.superior? %>
     <div>
-    <!--
-      <% if @approval_manager_notice %> # users_controllerで定義する
+      <% if @approval_monthly_report > 0 %>
         <span style="color: red">
-          <%= link_to "【所属長承認申請のお知らせ】",'#', remote: true, class: "approval_message" %>
+          <%= link_to "【所属長承認申請のお知らせ】", approval_monthly_report_user_attendances_path(@user), remote: true, class: "approval_message" %>
           <b stlye="margin-bottom: 1px; border: 3px solid red;"><%= @approval_monthly_report %>件の通知があります</b>
         </span>
-      <% else %> -->
+      <% else %>
         【所属長承認申請のお知らせ】
-      <!--<% end %> --><br>
+      <% end %><br>
       <% if @approval_monthly_edit > 0 %> <!--０件以上なら表示しなさい、の意味-->
         <span style="color: red">
           <%= link_to "【勤怠変更申請のお知らせ】", approval_monthly_edit_user_attendances_path(@user), remote: true, class: "approval_message" %>
@@ -93,7 +92,7 @@
     <!--各種処理区分-->
     <%= link_to "勤怠を編集", attendances_edit_one_month_user_path(@user, date: @first_day), class: "btn btn-primary" %>
     <%= link_to "CSV出力", user_path(@user, date: @first_day, format: :csv), class: "btn btn-primary" %><br>
-    <%= link_to "勤怠修正ログ（承認済）", '#', class: "btn btn-primary" %>
+    <%= link_to "勤怠修正ログ（承認済）", attendance_log_user_attendances_path(@user), remote: true, class: "btn btn-primary" %> <!--モーダル-->
     <tbody>
       <% @attendances.each do |day| %> <!-- @attendances= (@first_day..@last_day). -->
         <tr>
@@ -115,7 +114,7 @@
             <% end %>
           </td>
           <td>
-          <% if day.started_at.present? && day.finished_at.present? %>
+            <% if day.started_at.present? && day.finished_at.present? %>
             <!--< % byebug %>-->
               <%= str_times = working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %> <!--# gemのrouindingをinstall,floor_to(15minutesで丸めて表示)-->              
               <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
@@ -135,15 +134,26 @@
             <% end %>
           </td>
           <td><%= day.overtime_detail %></td>
-          <% if day.overtime_status == "申請中" %>
-            <td><%= day.overtime_confirmation %>に残業申請中</td>
-          <% elsif day.overtime_status == "承認" %>
-            <td>残業承認済</td>
-          <% elsif day.overtime_status == "否認" %>
-            <td>残業申請否認</td>
-          <% else %>
-            <td><%= day.overtime_status %></td>
-          <% end %>
+          <td>
+            <% if day.overtime_status == "申請中" %>
+              <div><%= day.overtime_confirmation %>に残業申請中</div>
+            <% elsif day.overtime_status == "承認" %>
+              <div>残業承認済</div>
+            <% elsif day.overtime_status == "否認" %>
+              <div>残業申請否認</div>
+            <% else %>
+              <!--<td><%= day.overtime_status %></td>-->
+            <% end %>
+            <% if day.edit_status == "申請中" %>
+              <div><%= day.edit_confirmation %>に残業申請中</div>
+            <% elsif day.edit_status == "承認" %>
+              <div>勤怠変更承認済</div>
+            <% elsif day.edit_status == "否認" %>
+              <div>勤怠変更申請否認</div>
+            <% else %>
+              <!--<td><%= day.edit_status %></td>-->
+            <% end %>
+          </td>
         </tr>
       <% end %>
     </tbody>
@@ -158,8 +168,21 @@
         <td colspan="5"></td>
         <td>
           <!--1ヶ月勤怠所属長承認申請-->
-          <%= "所属長承認　未" %><br>
-            <%= link_to "申請", class: "btn btn-md btn-primary" %>
+          <% if @monthly_attendance.monthly_status == "申請中" %>
+            <%= @monthly_attendance.monthly_confirmation %>へ<%= @monthly_attendance.monthly_status %><br>
+          <% elsif @monthly_attendance.monthly_status == "承認" %>
+            <%= @monthly_attendance.monthly_confirmation %>から<%= @monthly_attendance.monthly_status %>済<br>
+          <% elsif @monthly_attendance.monthly_status == "否認" %>
+            <%= @monthly_attendance.monthly_confirmation %>から<%= @monthly_attendance.monthly_status %>済<br>
+          <% else %>
+            <div>所属長承認　未</div><br>
+          <% end %>
+          <%= form_with(model: @user, url: attendances_monthly_approval_request_user_path(@user), local: true, method: :patch) do |f| %>
+            <%= f.hidden_field :monthly_status, :value => "申請中" %>
+            <%= f.hidden_field :worked_on, :value => @first_day %>
+            <div><%= f.collection_select :monthly_confirmation, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %></div><br>
+            <%= f.submit "申請", class: "btn btn-primary btn-block" %>
+          <% end %>
         </td>
       </tr>
     </tfoot>
@@ -171,9 +194,5 @@
 <div id="edit-overtime-request" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> <!--残業申請-->
 <div id="approval-overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> <!-- 上長が残業申請を承認するモーダル -->
 <div id="approval-monthly-edit" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> <!-- 上長が一か月分の勤怠編集を承認する -->
-  <!-- <div id="approval-monthly-report" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 一か月分の承認 --> 
-<<<<<<< HEAD
-  <!-- <div id="approval-monthly-edit" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 上長が一か月分勤怠編集を承認する--> 
-  <!-- <div id="approved-log" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 一か月編集で承認した勤怠ログの表示で、残業とが関係ない -->
-=======
-  <!-- <div id="approved-log" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> # 一か月編集で承認した勤怠ログの表示で、残業とが関係ない -->
+<div id="approval-monthly-report" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div> <!-- 一か月分の承認 -->
+<div id="attendance-log" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>  <!--一か月編集で承認した勤怠ログの表示で、残業とが関係ない-->

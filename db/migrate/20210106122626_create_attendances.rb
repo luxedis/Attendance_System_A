@@ -19,6 +19,8 @@ class CreateAttendances < ActiveRecord::Migration[5.1]
       t.string :edit_status # 勤怠変更申請の(申請中、なし、承認、否認)
       t.string :edit_confirmation # 勤怠編集画面で申請する上長のカラム
       t.date :approval_date # 勤怠ログで必要になる承認日
+      t.string :monthly_status # 一ヶ月分勤怠承認のステータス
+      t.string :monthly_confirmation # 一ヶ月分勤怠承認の指示者
       t.references :user, foreign_key: true
 
       t.timestamps

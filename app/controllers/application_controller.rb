@@ -1,7 +1,8 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   include SessionsHelper
-  require 'rounding'
+  require 'rounding' # 時間を丸める時にしよう
+  require 'date' # dateメソッドを使う、というて定義をしている。
   
   $days_of_the_week = %w{日 月 火 水 木 金 土}
   
