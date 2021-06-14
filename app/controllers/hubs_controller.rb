@@ -3,16 +3,16 @@ class HubsController < ApplicationController
   before_action :admin_user
   
   def index
-    @hubs = Hub.all
     @hub = Hub.new
+    @hubs = Hub.all.order('hub_number ASC')
   end
 
   def show
   end
   
-  # def new
-  #   @hub = Hub.new
-  # end
+  def new
+    @hub = Hub.new
+  end
   
   def create
     @hub = Hub.new(hub_params)
@@ -20,7 +20,8 @@ class HubsController < ApplicationController
       flash[:success] = "拠点情報を作成しました。"
       redirect_to hubs_url
     else
-      ######
+      @hubs = Hub.all.order('hub_number ASC')
+      redirect_to hubs_url
     end
   end
   
@@ -32,13 +33,14 @@ class HubsController < ApplicationController
       flash[:success] = "拠点情報を更新しました。"
       redirect_to hubs_url
     else
-      ######
+      @hubs = Hub.all.order('hub_number ASC')
+      redirect_to hubs_url
     end
   end
   
   def destroy
     @hub.destroy
-    flash[:success] = "#{@hub.number}のデータを削除しました。"
+    flash[:success] = "#{@hub.name}のデータを削除しました。"
     redirect_to hubs_url
   end
   
