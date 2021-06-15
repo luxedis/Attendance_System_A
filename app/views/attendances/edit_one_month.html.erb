@@ -23,7 +23,7 @@
               <td><%= l(day.worked_on, format: :short) %></td> <!-- l(day, format: :short --> <!--日付-->
               <td class='<%= "wday#{day.worked_on.wday}"%>'><%= $days_of_the_week[day.worked_on.wday] %></td> <!--[day.wday]-->
               <% if Date.current < day.worked_on %> <!-- !current_user.admin? && を外した状態-->
-                <td><%= attendance.time_field :edit_started_at, readonly: true, class: "form-control" %></td>
+                <td><%= attendance.time_field :edit_started_at, readonly: true, class: "form-control" %></td> <!--"form-control"を入れると枠がformに合わせてくれる-->
                 <td><%= attendance.time_field :edit_finished_at, readonly: true, class: "form-control" %></td>
               <% else %>
                 <td><%= attendance.time_field :edit_started_at, class: "form-control" %></td>
@@ -37,7 +37,7 @@
                 <% end %>
               </td>
               <td><%= attendance.text_field :note, class: "form-control" %></td> <!--備考-->
-              <td><%= attendance.collection_select :edit_confirmation, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %></td> <!--指示者確認印-->
+              <td><%= attendance.collection_select :edit_confirmation, @superiors, :name, :name, {include_blank: true, selected: ""}, { class: "superior_class form-control" } %></td> <!--指示者確認印-->
             </tr>
           <% end %>
         <% end %>
