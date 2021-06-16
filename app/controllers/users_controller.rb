@@ -18,6 +18,8 @@ require 'csv'
   end
   
   def show
+    redirect_to users_url if current_user.admin?                # 管理者の場合はユーザー一覧画面へ
+    
     @worked_sum = @attendances.where.not(started_at: nil).count
     respond_to do |format|
       format.html

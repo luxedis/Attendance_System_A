@@ -12,7 +12,7 @@
 
     <div class="modal-body">
       <%= form_with(model: @attendance, url: update_overtime_request_user_attendance_path(@user, @attendance), local: true, method: :patch) do |f| %>
-        <table class="table table-striped table-bordered table-condensed table-hover">
+        <table class="table table-striped table-bordered table-condensed table-hover table-center">
           <thead>
             <tr>
               <th>日付</th>
@@ -29,9 +29,9 @@
               <td><%= $days_of_the_week[@attendance.worked_on.wday] %></td> <!--曜日-->
               <td><%= f.time_select :scheduled_end_time, minute_step: 15, class: "form_control" %></td> <!--time_select,minute_step15で終了予定時間を15分刻みの表示に固定-->
               <td><%= f.check_box :overtime_next_day, id: "overtime_next_day" %></td> <!--翌日-->
-              <td><%= f.text_field :overtime_detail, class: "form_control" %></td> <!--業務処理内容-->
+              <td><%= f.text_field :overtime_detail, class: "form_control form-control" %></td> <!--業務処理内容-->
               <td>
-                <%= f.collection_select :overtime_confirmation, @superiors, :name, :name, {include_blank: true}, { class: "superior_class" } %> <!--残業申請モーダルの上長の名前-->
+                <%= f.collection_select :overtime_confirmation, @superiors, :name, :name, {include_blank: true, selected: ""}, { class: "superior_class form-control" } %> <!--残業申請モーダルの上長の名前-->
               </td>
             </tr>
           </tbody>

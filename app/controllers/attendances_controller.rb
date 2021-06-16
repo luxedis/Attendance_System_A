@@ -40,6 +40,15 @@ class AttendancesController < ApplicationController
           elsif item[:edit_started_at].blank? && item[:edit_finished_at].present?
             flash[:danger] = "出社時間が入力されていません。"
             redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+          elsif item[:edit_started_at].blank? && item[:edit_finished_at].blank?
+            flash[:danger] = "出勤時間、退勤時間を入力してください。"
+            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+          elsif (item[:edit_next_day] == "0") && (item[:edit_started_at] > item[:edit_finished_at]) # &&つける時は両側に()をつけること
+            flash[:danger] = "出勤時間より早い退勤時間は無効です。"
+            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+          elsif item[:edit_confirmation].blank?
+            flash[:danger] = "指示者を入力してください。"
+            redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
           # elsif item[:edit_confirmation].blank?  上長の入力がある項目のみ扱っているので、上記の該当コードがなければ左記を復活させる
           #   flash[:danger] = "上長を選択してください。"
           #   redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
@@ -160,15 +169,17 @@ class AttendancesController < ApplicationController
             attendance.approval_date = Date.today # 承認日付、ログ用
           elsif item[:edit_status] == "なし"
             n2 += 1
-            if attendance.edit_status == "承認" || "否認" # 前回承認or否認して今回なしにした時の為に、記録を残したい。
-              item[:edit_status] = attendance.edit_status # これをしてあげないとitem[:edit_status] =="なし"だけ残ってしまう.
-            else
+           # if (attendance.edit_status == "承認") || (attendance.edit_status == "否認") # 前回承認or否認して今回なしにした時の為に、記録を残したい。
+              # debugger
+              # item[:edit_status] = attendance.edit_status # これをしてあげないとitem[:edit_status] =="なし"だけ残ってしまう.
+            # else
+              # debugger
               attendance.edit_started_at = nil # "承認"or"否認"の場合は以下をnilにする
               attendance.edit_finished_at = nil
               attendance.edit_next_day = nil
               attendance.note = nil
               attendance.edit_confirmation = nil
-            end
+            # end
           elsif item[:edit_status] == "否認"
             n3 += 1
           end

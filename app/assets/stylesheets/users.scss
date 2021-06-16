@@ -63,3 +63,12 @@
   margin: 15px 0;
   width: 30%;
 }
+
+.table-center {
+  th {
+    text-align: center;
+  }
+  td {
+    vertical-align: middle;
+    text-align: center;
+}}
