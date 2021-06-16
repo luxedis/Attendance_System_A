@@ -5,7 +5,6 @@ class UsersController < ApplicationController
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info, :update_all_users_basic_info]
   before_action :admin_or_correct_user, only: :show
   before_action :set_one_month, only: :show
-  before_action :admin_use, only: :index
   
 require 'csv'
 
@@ -19,6 +18,8 @@ require 'csv'
   end
   
   def show
+    redirect_to users_url if current_user.admin?                # 管理者の場合はユーザー一覧画面へ
+    
     @worked_sum = @attendances.where.not(started_at: nil).count
     respond_to do |format|
       format.html
